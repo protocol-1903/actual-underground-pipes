@@ -1,10 +1,10 @@
 {
-  "name": "[internal-mod-name]",
-  "version": "0.0.0",
-  "title": "[MOD DISPLAY NAME]",
-  "author": "[YOUR MODS.FACTORIO.COM USERNAME]",
-  "homepage": "[HOMEPAGE/REPO URL]",
-  "description": "[SHORT DESCRIPTION]",
+  "name": "actual-underground-pipes",
+  "version": "0.1.0",
+  "title": "Actual Underground Pipes",
+  "author": "protocol_1903",
+  "homepage": "https://github.com/NotACliche/actual-underground-pipes",
+  "description": "What? Underground pipes actually require... pipes!?",
   "factorio_version": "1.1",
   "dependencies": [
     "base"
