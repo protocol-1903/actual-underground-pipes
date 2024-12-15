@@ -1,12 +1,15 @@
 {
-  "name": "what-items-do-i-have",
-  "version": "1.0.0",
-  "title": "What Items Do I Have?",
+  "name": "the-one-mod-with-underground-bits",
+  "version": "0.1.0",
+  "title": "Actual Underground Pipes",
   "author": "protocol_1903",
-  "homepage": "https://github.com/NotACliche/what-items-do-i-have",
-  "description": "Press Alt + Z over anything to see how many you have in your logistics network, and of what quality.\nRequested on the forums by Tinyboss",
+  "homepage": "https://github.com/NotACliche/actual-underground-pipes",
+  "description": "What? Underground pipes actually require... pipes!?",
   "factorio_version": "2.0",
   "dependencies": [
-    "base"
+    "base",
+    "! FluidMustFlow",
+    "! underground-pipe-pack",
+    "(?) no-pipe-touching"
   ]
 }

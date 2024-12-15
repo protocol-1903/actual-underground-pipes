@@ -14,6 +14,8 @@ Underground pipes have the same restrictions as normal pipe to grounds. This mea
 
 # Known Issues
 - Pipe to Grounds have a phantom pipe cover when not connected. It's not fixable without removing the pipe covers of pipe to grounds entirely, and it only shows up when they aren't connected, so I don't see it as a major issue.
+- Using the pipette tool on an underground pipe returns the non-underground variant. This is fixable, but then prevents bots from building underground pipes. I will not be changing that as of now.
+- There may be crashes or locale issues with certain mods. If you find them, please lete me know.
 
 Supports all mods, hopefully. If something doesn't work, let me know!
 
