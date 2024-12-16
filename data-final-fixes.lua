@@ -54,6 +54,9 @@ for p, pipe in pairs(data.raw.pipe) do
       underground.visualization.south.layers[1].shift = util.by_pixel(0, downshift)
       underground.visualization.west.layers[1].shift = util.by_pixel(0, downshift)
 
+      -- set heating enrergy of pipe-to-ground to that of the pipe
+      underground.heating_energy = pipe.heating_energy
+
       -- update collision mask
       if not underground.collision_mask then
         underground.collision_mask = {

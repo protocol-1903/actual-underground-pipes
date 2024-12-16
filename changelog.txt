@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2024-12-16
+  Changes:
+    - Changed Pipe to Grounds to copy the heat_energy of the associated Pipe. This means that they will take the same amount of heat to unfreeze as normal pipes.
+        Underground Pipes did not freeze, this has not been changed.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2024-12-15
   Info:
