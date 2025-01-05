@@ -26,7 +26,8 @@ end
 for p, pipe in pairs(data.raw.pipe) do
   for u, underground in pairs(data.raw["pipe-to-ground"]) do
     if u:sub(1,-11) == p then
-      local underground_collision_mask
+      underground.solved_by_tomwub = true
+      local underground_collision_mask, tag
       -- the underground name matches with the pipe name
       -- also only runs this chunk of code once per supported underground
       for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
@@ -35,9 +36,18 @@ for p, pipe in pairs(data.raw.pipe) do
           pipe_connection.connection_type = "normal"
           pipe_connection.max_underground_distance = nil
           -- set the filter to the psuedo underground pipe name
-          pipe_connection.connection_category = mods["no-pipe-touching"] and "tomwub-" .. p .. "-underground" or "tomwub-underground"
+          if not mods["no-pipe-touching"] then
+            pipe_connection.connection_category = "tomwub-underground"
+          elseif not underground.npt_compat then
+            pipe_connection.connection_category = "tomwub-" .. p .. "-underground"
+          elseif underground.npt_compat.tag then
+            pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.mod .. "-" .. underground.npt_compat.tag .. "-underground"
+          elseif underground.npt_compat.override then
+            pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
+          end
           -- save collision mask for later
           underground_collision_mask = pipe_connection.underground_collision_mask
+          tag = pipe_connection.connection_category
         end
       end
 
@@ -61,8 +71,6 @@ for p, pipe in pairs(data.raw.pipe) do
       if not underground.collision_mask then
         underground.collision_mask = {
           layers = {
-            [p .. "-underground"] = true,
-            ["tomwub-underground"] = true,
             is_lower_object = true,
             water_tile = true,
             floor = true,
@@ -72,10 +80,10 @@ for p, pipe in pairs(data.raw.pipe) do
             meltable = true
           }
         }
-      else
-        underground.collision_mask.layers[p .. "-underground"] = true
-        underground.collision_mask.layers["tomwub-underground"] = true
       end
+
+      -- set the collision mask to the connection_category collected earlier
+      underground.collision_mask.layers[tag] = true
 
       -- create new item, entity, and collision layer
       data.extend{
@@ -105,29 +113,22 @@ for p, pipe in pairs(data.raw.pipe) do
           selection_priority = 255,
           placeable_by = { {item = "tomwub-" .. p, count = 1}, {item = p, count = 1} },
           is_military_target = false
-        },
-        {
-          type = "collision-layer",
-          name = p .. "-underground"
         }
       }
       if mods["no-pipe-touching"] then
         data.extend{{
           type = "collision-layer",
-          name = p .. "-underground"
+          name = tag
         }}
       end
       tomwub_pipe = data.raw.pipe["tomwub-" .. p]
       for _, pipe_connection in pairs(tomwub_pipe.fluid_box.pipe_connections) do
-        pipe_connection.connection_category = mods["no-pipe-touching"] and "tomwub-" .. p .. "-underground" or "tomwub-underground"
+        pipe_connection.connection_category = tag
       end
-      
-      -- add custom collision mask
-      if mods["no-pipe-touching"] then
-        tomwub_pipe.collision_mask.layers[p .. "-underground"] = true
-      else
-        tomwub_pipe.collision_mask.layers["tomwub-underground"] = true
-      end
+
+      -- set the collision mask to the connection_category collected earlier
+      tomwub_pipe.collision_mask.layers[tag] = true
+
       -- shift everything down
       tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, downshift)
       reformat(tomwub_pipe.pictures)
@@ -163,8 +164,7 @@ for p, pipe in pairs(data.raw.pipe) do
         data.raw.recipe[u].ingredients = {}
         -- add ingredient if not the associated pipe
         for _, ingredient in pairs(ingredients) do
-          log(ingredient.name)
-          if ingredient.name ~= p then
+          if not ingredient.name:find("pipe") then
             data.raw.recipe[u].ingredients[#data.raw.recipe[u].ingredients+1] = ingredient
           end
         end
@@ -191,3 +191,110 @@ data:extend{
     name = "tomwub-underground",
   }
 }
+
+local stripped_ptg_vis = data.raw["pipe-to-ground"]["pipe-to-ground"].visualization
+for d, direction in pairs(stripped_ptg_vis) do
+  stripped_ptg_vis[d] = direction.layers[2]
+end
+
+for u, underground in pairs(data.raw["pipe-to-ground"]) do
+  if not underground.solved_by_tomwub then
+    local directions, tag = {}
+    for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
+      if pipe_connection.connection_type == "underground" then
+        -- make the underground a fake underground
+        pipe_connection.connection_type = "normal"
+        pipe_connection.max_underground_distance = nil
+        -- set the filter to the psuedo underground pipe name
+        if not mods["no-pipe-touching"] then
+          pipe_connection.connection_category = "tomwub-underground"
+        elseif not underground.npt_compat then
+          pipe_connection.connection_category = "tomwub-" .. "pipe" .. "-underground"
+        elseif underground.npt_compat.tag then
+          pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.mod .. "-" .. underground.npt_compat.tag .. "-underground"
+        elseif underground.npt_compat.override then
+          pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
+        end
+        
+        tag = pipe_connection.connection_category
+        directions[#directions+1] = pipe_connection.direction
+      end
+    end
+
+    for d, direction in pairs(directions) do
+      local old_visualization = underground.visualization or stripped_ptg_vis
+      underground.visualization = {}
+      for i=0,3 do
+        -- increment new direction from offset vector
+        local vis_dir = (direction + i * 4) % 16
+        -- add to base sprite
+        underground.visualization[i == 0 and "north" or i == 1 and "east" or i == 2 and "south" or i == 3 and "west"] = {
+          layers = {table.deepcopy(stripped_ptg_vis[vis_dir == 0 and "north" or vis_dir == 4 and "east" or vis_dir == 8 and "south" or vis_dir == 12 and "west"])}
+        }
+      end
+
+      -- shift them all down
+      underground.visualization.north.layers[1].shift = util.by_pixel(0, downshift)
+      underground.visualization.east.layers[1].shift = util.by_pixel(0, downshift)
+      underground.visualization.south.layers[1].shift = util.by_pixel(0, downshift)
+      underground.visualization.west.layers[1].shift = util.by_pixel(0, downshift)
+
+        -- copy old visualisations on top of new ones
+      if old_visualization.north.layers then
+        -- layers exist, copy those
+        for s, sprite in pairs(old_visualization.north.layers) do
+          underground.visualization.north.layers[#underground.visualization.north.layers+1] = sprite
+        end
+        for s, sprite in pairs(old_visualization.east.layers) do
+          underground.visualization.east.layers[#underground.visualization.east.layers+1] = sprite
+        end
+        for s, sprite in pairs(old_visualization.south.layers) do
+          underground.visualization.south.layers[#underground.visualization.south.layers+1] = sprite
+        end
+        for s, sprite in pairs(old_visualization.west.layers) do
+          underground.visualization.west.layers[#underground.visualization.west.layers+1] = sprite
+        end
+      else
+        -- layers do not exist, copy new ones
+        underground.visualization.north.layers[#underground.visualization.north.layers+1] = old_visualization.north
+        underground.visualization.east.layers[#underground.visualization.east.layers+1] = old_visualization.east
+        underground.visualization.south.layers[#underground.visualization.south.layers+1] = old_visualization.south
+        underground.visualization.west.layers[#underground.visualization.west.layers+1] = old_visualization.west
+      end
+    end
+
+    -- update collision mask
+    if not underground.collision_mask then
+      underground.collision_mask = {
+        layers = {
+          is_lower_object = true,
+          water_tile = true,
+          floor = true,
+          transport_belt = true,
+          item = true,
+          car = true,
+          meltable = true
+        }
+      }
+    end
+    underground.collision_mask.layers[tag] = true
+    
+    -- if recipe exists
+    if data.raw.recipe[u] then
+      local ingredients = data.raw.recipe[u].ingredients
+      data.raw.recipe[u].ingredients = {}
+      -- add ingredient if not the associated pipe
+      for _, ingredient in pairs(ingredients) do
+        if not ingredient.name:find("pipe") then
+          data.raw.recipe[u].ingredients[#data.raw.recipe[u].ingredients+1] = ingredient
+        end
+      end
+    end
+  else
+    underground.solved_by_tomwub = nil
+  end
+  if mods["no-pipe-touching"] then
+    underground.solved_by_npt = nil
+    underground.npt_compat = nil
+  end
+end

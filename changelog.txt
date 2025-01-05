@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2025-01-05
+  Features:
+    - Proper support for Pipe Plus
+    - Proper support for NPT
+    - Proper support for Color Coded Pipes
+    - Proper support for NPT mod interactions
+  Changes:
+    - Removed unnecessary prototypes
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2024-12-16
   Changes:
