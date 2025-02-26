@@ -159,13 +159,20 @@ for p, pipe in pairs(data.raw.pipe) do
       tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, downshift)[2]}}
     
       -- if recipe exists
-      if data.raw.recipe[u] then
+      if not mods["bztin"] and data.raw.recipe[u] then
         local ingredients = data.raw.recipe[u].ingredients
         data.raw.recipe[u].ingredients = {}
         -- add ingredient if not the associated pipe
         for _, ingredient in pairs(ingredients) do
-          if not ingredient.name:find("pipe") then
+          if not data.raw.pipe[ingredient.name] then -- if not a pipe then add to ingredients
             data.raw.recipe[u].ingredients[#data.raw.recipe[u].ingredients+1] = ingredient
+          end
+        end
+      elseif mods["bztin"] and data.raw.recipe[u] then
+        -- modify counts
+        for _, ingredient in pairs(data.raw.recipe[u].ingredients) do
+          if data.raw.pipe[ingredient.name] and ingredient.amount > 2 then
+            ingredient.amount = 2 -- if a pipe, set amount to 2
           end
         end
       end
