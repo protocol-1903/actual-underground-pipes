@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2025-02-27
+  Bugfixes:
+    - Fixed not being able to cross pipes with underground pipes when the Janus planet mod is enabled
+    - Fixed a crash when using the swap layer keybind while holding a hot pipe from the Hot Metals mod
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2025-02-26
   Bugfixes:

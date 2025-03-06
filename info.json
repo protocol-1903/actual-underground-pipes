@@ -1,6 +1,6 @@
 {
   "name": "the-one-mod-with-underground-bits",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "title": "Actual Underground Pipes",
   "author": "protocol_1903",
   "homepage": "https://discord.gg/K3fXMGVc4z",
@@ -10,6 +10,7 @@
     "base",
     "! FluidMustFlow",
     "! underground-pipe-pack",
-    "(?) no-pipe-touching"
+    "(?) no-pipe-touching",
+    "(?) janus"
   ]
 }
