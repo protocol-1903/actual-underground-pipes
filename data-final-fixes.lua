@@ -6,13 +6,23 @@ local function reformat(spritesheet, ignore)
       for _, sprit in pairs(sprite.layers) do
         sprit.shift = util.by_pixel(0, downshift)
         if not s:find("visualization") then
-          sprit.tint = {0,0,0,0}
+          sprit.tint = {
+            settings.startup["pipe-opacity"].value,
+            settings.startup["pipe-opacity"].value,
+            settings.startup["pipe-opacity"].value,
+            settings.startup["pipe-opacity"].value
+          }
         end
       end
     else
       sprite.shift = util.by_pixel(0, downshift)
       if not s:find("visualization") then
-        sprite.tint = {0,0,0,0}
+        sprite.tint = {
+          settings.startup["pipe-opacity"].value,
+          settings.startup["pipe-opacity"].value,
+          settings.startup["pipe-opacity"].value,
+          settings.startup["pipe-opacity"].value
+        }
       end
     end
     if s:find("disabled_visualization") then
@@ -53,6 +63,7 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- create new visualizations for the pipe-to-ground
       local old_visualization = underground.visualization or data.raw["pipe-to-ground"]["pipe-to-ground"].visualization
+      log("solving visualizations")
       underground.visualization = {
         north = {layers = {table.deepcopy(old_visualization.south), old_visualization.north}},
         east = {layers = {table.deepcopy(old_visualization.west), old_visualization.east}},
@@ -181,6 +192,8 @@ for p, pipe in pairs(data.raw.pipe) do
     end
   end
 end
+
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
 
 data:extend{
   {
