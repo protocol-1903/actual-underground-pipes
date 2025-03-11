@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.7
+Date: 2025-03-11
+  Features:
+    - Added underground duct auto join
+  Bugfixes:
+    - Fixed spamming the chat whenever the layer was switched
+    - Fixed underground ducts having floating pipe covers
+---------------------------------------------------------------------------------------------------
 Version: 0.1.6
 Date: 2025-03-11
   Features:

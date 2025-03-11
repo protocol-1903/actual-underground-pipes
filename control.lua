@@ -2,9 +2,9 @@ script.on_init(function (event)
   storage.tomwub = {}
 end)
 
+local event_filter = {{filter = "type", type = "pipe"}, {filter = "type", type = "storage-tank"}}
+
 local function is_same_type(self, check)
-  game.print((#self > 7 and self:sub(8) or "nil") .. ":" .. check)
-  game.print(self .. ":" .. check)
   return #self > 7 and self:sub(8) == check or self == check
 end
 
@@ -31,8 +31,6 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
 
   -- was previously holding item but placed last one, signaled by on_built_entity OR just pipetted a tomwub pipe (creating ghost item)
   if player.is_cursor_empty() and storage.tomwub[event.player_index].count == -1 or player.cursor_ghost and item and item:sub(1,7) == "tomwub-" then
-
-    game.print(item)
 
     -- get count and remove from inventory
     local removed = player.get_main_inventory().remove {
@@ -81,7 +79,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
 end)
 
 -- on placed entity
-script.on_event(defines.events.on_built_entity, function (event)
+function handle(event)
 
   -- teleport valid entities so that pipe visualizations appear properly
   if event.entity.name:sub(1,7) == "tomwub-" then
@@ -119,7 +117,12 @@ script.on_event(defines.events.on_built_entity, function (event)
       quality = event.entity.quality
     }
   end
-end, {{filter = "type", type = "pipe"}, {filter = "type", type = "storage-tank"}})
+end
+
+script.on_event(defines.events.on_built_entity, handle, event_filter)
+script.on_event(defines.events.on_robot_built_entity, handle, event_filter)
+script.on_event(defines.events.script_raised_built, handle, event_filter)
+script.on_event(defines.events.script_raised_revive, handle, event_filter)
 
 -- swap between aboveground and belowground layers
 script.on_event("tomwub-swap-layer", function(event)
@@ -220,3 +223,107 @@ end)
 
 
 -- teleport pipes so the visualization is on the bottom
+
+-- The only thing we're doing is auto-join, so don't even bother if it's not enabled
+if not script.active_mods["FluidMustFlow"] or not settings.startup["fmf-enable-duct-auto-join"].value then
+  return
+end
+
+-- The entire file below this point is copied in src/prototypes/tips-and-tricks.lua for the drag building simulation
+
+--- Calculates the midpoint between two positions.
+--- @param pos_1 MapPosition
+--- @param pos_2 MapPosition
+--- @return MapPosition
+local function get_midpoint(pos_1, pos_2)
+  return {
+    x = (pos_1.x + pos_2.x) / 2,
+    y = (pos_1.y + pos_2.y) / 2,
+  }
+end
+
+--- @param e EventData.on_built_entity|EventData.on_robot_built_entity|EventData.script_raised_built|EventData.script_raised_revive
+local function join_ducts(e)
+  --- @type LuaEntity
+  local entity = e.entity
+  if not entity or not entity.valid then
+    return
+  end
+
+  for _, connection in pairs(entity.fluidbox.get_pipe_connections(1)) do
+    local neighbour = entity.surface.find_entity(entity.name, connection.target_position)
+    if neighbour then
+      local direction = entity.direction
+      local force = entity.force
+      local last_user = entity.last_user
+      local name = entity.name == "tomwub-duct-small" and "tomwub-duct" or "tomwub-duct-long"
+      local position = get_midpoint(entity.position, neighbour.position)
+      local surface = entity.surface
+
+      entity.destroy({ raise_destroy = true })
+      neighbour.destroy({ raise_destroy = true })
+
+      surface.create_entity({
+        name = name,
+        position = position,
+        direction = direction,
+        force = force,
+        player = last_user,
+        raise_built = true,
+        create_build_effect_smoke = false,
+      })
+
+      -- Only do one join per build
+      break
+    end
+  end
+end
+
+function handle(event)
+  if event.entity.type == "storage-tank" or event.entity.type == "pipe" or event.entity.type == "pump" then
+    -- teleport valid entities so that pipe visualizations appear properly
+    if event.entity.name:sub(1,7) == "tomwub-" then
+      event.entity.teleport(event.entity.position)
+    else
+      local entities = event.entity.surface.find_entities_filtered{
+        area = {
+          {
+            event.entity.position.x - event.entity.prototype.collision_box.left_top.x,
+            event.entity.position.y - event.entity.prototype.collision_box.left_top.y
+          },
+          {
+            event.entity.position.x + event.entity.prototype.collision_box.right_bottom.x,
+            event.entity.position.y + event.entity.prototype.collision_box.right_bottom.y
+          }
+        }
+      }
+      for _, pipe in pairs(entities) do
+        if pipe.name:sub(1,7) == "tomwub-" then
+          pipe.teleport(pipe.position)
+        end
+      end
+    end
+    if event.player_index then
+      player = game.get_player(event.player_index)
+      if not player then return end
+
+      -- if player just placed last item, then signal to script to update hand again
+      if player.is_cursor_empty() and storage.tomwub[event.player_index].count == 1 then
+        storage.tomwub[event.player_index].count = -1
+
+        -- set ghost cursor
+        player.cursor_ghost = {
+          name = event.entity.name,
+          quality = event.entity.quality
+        }
+      end
+    end
+  end
+  if event.entity.name == "tomwub-duct-small" or event.entity.name == "tomwub-duct" then
+    join_ducts(event)
+  end
+end
+script.on_event(defines.events.on_built_entity, handle, event_filter)
+script.on_event(defines.events.on_robot_built_entity, handle, event_filter)
+script.on_event(defines.events.script_raised_built, handle, event_filter)
+script.on_event(defines.events.script_raised_revive, handle, event_filter)

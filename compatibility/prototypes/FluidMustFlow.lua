@@ -1,24 +1,14 @@
 if not mods["FluidMustFlow"] then return end
 
 local downshift = 10
-local pipes
-if settings.startup["fmf-enable-duct-auto-join"].value then
-  pipes = {
-    "duct-curve",
-    "duct-t-junction",
-    "duct-small",
-    "duct-cross"
-  }
-else
-  pipes = {
-    "duct-curve",
-    "duct-t-junction",
-    "duct",
-    "duct-small",
-    "duct-long",
-    "duct-cross"
-  }
-end
+local pipes = {
+  "duct-curve",
+  "duct-t-junction",
+  "duct",
+  "duct-small",
+  "duct-long",
+  "duct-cross"
+}
 
 local function reformat(spritesheet, ignore)
   for s, sprite in pairs(spritesheet) do
@@ -136,8 +126,8 @@ for _, pipe in pairs(pipes) do
   local p = pipe
   local pipe = data.raw["storage-tank"][p]
   -- create new item, entity, and collision layer
-  data.extend{
-    {
+  if data.raw.item[p] then
+    data:extend{{
       type = "item",
       name = "tomwub-" .. p,
       icon = pipe.icon or data.raw.pipe.pipe.icon,
@@ -145,7 +135,9 @@ for _, pipe in pairs(pipes) do
       place_result = "tomwub-" .. p,
       flags = {"only-in-cursor"},
       stack_size = data.raw.item[p].stack_size
-    },
+    }}
+  end
+  data.extend{
     {
       type = "storage-tank",
       name = "tomwub-" .. p,
@@ -169,6 +161,13 @@ for _, pipe in pairs(pipes) do
   }
   
   tomwub_pipe = data.raw["storage-tank"]["tomwub-" .. p]
+  if settings.startup["fmf-enable-duct-auto-join"].value then
+    tomwub_pipe.placeable_by = {
+      {item = "tomwub-duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4},
+      {item = "duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4}
+    }
+  end
+
   for _, pipe_connection in pairs(tomwub_pipe.fluid_box.pipe_connections) do
     pipe_connection.connection_category = tag
   end
@@ -182,10 +181,6 @@ for _, pipe in pairs(pipes) do
     tomwub_pipe.icon_draw_specification.scale = 0.35
   end
   reformat(tomwub_pipe.pictures.picture)
-  if tomwub_pipe.fluid_box.pipe_covers == nil then
-    tomwub_pipe.fluid_box.pipe_covers = table.deepcopy(pipecoverspictures())
-  end
-  reformat(tomwub_pipe.fluid_box.pipe_covers, true)
 
   tomwub_pipe.pictures.gas_flow = nil
   tomwub_pipe.pictures.low_temperature_flow = nil
