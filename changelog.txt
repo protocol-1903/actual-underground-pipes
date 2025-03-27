@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+Date: ????
+  Features:
+    - Added smart pipette (when pipetting an underground pipe, selects the underground pipe instead of the normal variant)
+  Bugfixes:
+    - Fixed a crash when entering or leaving remote view while holding an underground pipe
+    - Fixed a crash when attempting to reference a nil player
+---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2025-03-11
   Features:

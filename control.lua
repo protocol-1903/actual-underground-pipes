@@ -8,11 +8,62 @@ local function is_same_type(self, check)
   return #self > 7 and self:sub(8) == check or self == check
 end
 
+script.on_event(defines.events.on_player_controller_changed, function (event)
+  local player = game.players[event.player_index]
+
+  local item = player.cursor_ghost and player.cursor_ghost.name.name or
+    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
+  local quality = player.cursor_ghost and player.cursor_ghost.quality or 
+    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.quality or nil
+
+  if not item or item:sub(1,7) ~= "tomwub-" then return end
+
+  if player.controller_type == defines.controllers.remote then
+    if event.old_type ~= defines.controllers.editor then
+      -- was previously holding item, just put it away so put pipes back into inventory
+      player.get_main_inventory().insert {
+        name = old_item:sub(8, -1),
+        count = old_count,
+        quality = old_quality
+      }
+    end
+    storage.tomwub[player.index].count = -3 - storage.tomwub[player.index].count
+  end
+end)
+
+-- when pipetting an underground pipe, put that one in the hand instead
+script.on_event(defines.events.on_player_pipette, function (event)
+  local player = game.players[event.player_index]
+
+  local entity = player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name
+  local quality = player.selected.quality
+
+  if entity:sub(1,7) == "tomwub-" then
+    if not player.cursor_ghost then
+      -- should fill normally with stack change script
+      storage.tomwub[player.index] = {
+        item = entity,
+        count = -1,
+        quality = quality
+      }
+    end
+    player.clear_cursor()
+    player.cursor_ghost = {
+      name = entity,
+      quality = quality
+    }
+  end
+
+end)
+
 -- if ghost underground selected, check if it needs refilling
 script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
 
-  player = game.get_player(event.player_index)
+  local player = game.players[event.player_index]
   if not player then return end
+
+  -- if in remote view do nothing
+  if player.controller_type == defines.controllers.remote then return end
 
   local item = player.cursor_ghost and player.cursor_ghost.name.name or
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
@@ -30,13 +81,13 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
   if old_count == -2 then goto continue end
 
   -- was previously holding item but placed last one, signaled by on_built_entity OR just pipetted a tomwub pipe (creating ghost item)
-  if player.is_cursor_empty() and storage.tomwub[event.player_index].count == -1 or player.cursor_ghost and item and item:sub(1,7) == "tomwub-" then
+  if player.cursor_ghost and old_count == -1 then
 
     -- get count and remove from inventory
-    local removed = player.get_main_inventory().remove {
-      name = item:sub(8,-1),
+    local removed = player.get_main_inventory().remove{
+      name = old_item:sub(8,-1),
       count = player.cursor_ghost.name.stack_size,
-      quality = quality
+      quality = old_quality
     }
 
     -- if none removed
@@ -65,6 +116,43 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       name = old_item:sub(8, -1),
       count = old_count,
       quality = old_quality
+    }
+  elseif not player.is_cursor_empty() and old_count < -3 and item:sub(1,7) == "tomwub-" then
+
+    local amount_removed = player.controller_type == defines.controllers.editor and -3 - old_count or player.get_main_inventory().remove{
+      name = item:sub(8, -1),
+      count = -3 - old_count,
+      quality = quality
+    }
+
+    if removed == 0 then goto continue end
+
+    -- find open slot for hand to go
+    local _, stack = player.get_main_inventory().find_empty_stack()
+
+    if not stack then
+      amount_removed = player.get_main_inventory().remove{
+        name = item:sub(8, -1),
+        count = player.cursor_ghost.stack_size - amount_removed,
+        quality = quality
+      }
+
+      _, stack = player.get_main_inventory().find_empty_stack()
+
+      if not stack then error("stack not created") end
+    end
+
+    -- was previously holding item, just put it away so put pipes back into inventory
+    player.cursor_stack.set_stack {
+      name = item,
+      count = amount_removed,
+      quality = old_quality
+    }
+
+    -- set hand location to preserve place for player to put items
+    player.hand_location = {
+      inventory = player.get_main_inventory().index,
+      slot = stack
     }
   end
 
@@ -127,7 +215,7 @@ script.on_event(defines.events.script_raised_revive, handle, event_filter)
 -- swap between aboveground and belowground layers
 script.on_event("tomwub-swap-layer", function(event)
 
-  player = game.get_player(event.player_index)
+  player = game.players[event.player_index]
   if not player then return end
 
   local item = player.cursor_ghost and player.cursor_ghost.name.name or
