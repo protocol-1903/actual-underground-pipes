@@ -35,8 +35,10 @@ end)
 script.on_event(defines.events.on_player_pipette, function (event)
   local player = game.players[event.player_index]
 
-  local entity = player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name
-  local quality = player.selected.quality
+  local entity = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name)
+  local quality = player.selected and player.selected.quality
+
+  if not player.selected then return end
 
   if entity:sub(1,7) == "tomwub-" then
     if not player.cursor_ghost then
