@@ -121,7 +121,7 @@ for p, pipe in pairs(data.raw.pipe) do
           flags = {"not-upgradable", "player-creation", "placeable-neutral"},
           horizontal_window_bounding_box = pipe.horizontal_window_bounding_box,
           vertical_window_bounding_box = pipe.vertical_window_bounding_box,
-          icon_draw_specification = table.deepcopy(pipe.icon_draw_specification),
+          icon_draw_specification = table.deepcopy(pipe.icon_draw_specification or data.raw.pipe.pipe.icon_draw_specification),
           minable = pipe.minable,
           selection_priority = 255,
           placeable_by = { {item = "tomwub-" .. p, count = 1}, {item = p, count = 1} },
