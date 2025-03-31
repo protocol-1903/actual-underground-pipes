@@ -194,7 +194,7 @@ function handle(event)
     end
   end
 
-  player = game.get_player(event.player_index)
+  player = game.players[event.player_index]
   if not player then return end
 
   -- if player just placed last item, then signal to script to update hand again
