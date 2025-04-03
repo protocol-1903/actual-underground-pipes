@@ -40,7 +40,7 @@ script.on_event(defines.events.on_player_pipette, function (event)
 
   if not player.selected then return end
 
-  if entity:sub(1,7) == "tomwub-" then
+  if entity:sub(1,7) == "tomwub-" and prototypes.item[entity] then
     if not player.cursor_ghost then
       -- should fill normally with stack change script
       storage.tomwub[player.index] = {
@@ -52,6 +52,21 @@ script.on_event(defines.events.on_player_pipette, function (event)
     player.clear_cursor()
     player.cursor_ghost = {
       name = entity,
+      quality = quality
+    }
+  elseif entity:sub(1,7) == "tomwub-" then
+    name = entity:sub(-6, -3) == "-fc-" and entity:sub(1,-7) or entity:sub(-7, -4) == "-fc-" and entity:sub(1,-8)
+    if not player.cursor_ghost then
+      -- should fill normally with stack change script
+      storage.tomwub[player.index] = {
+        item = name,
+        count = -1,
+        quality = quality
+      }
+    end
+    player.clear_cursor()
+    player.cursor_ghost = {
+      name = name,
       quality = quality
     }
   end

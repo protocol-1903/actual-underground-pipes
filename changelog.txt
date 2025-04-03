@@ -3,6 +3,7 @@ Version: 0.1.12
 Date: ????
   Bugfixes:
     - Fixed a crash when placing the last normal pipe in the inventory
+    - Fixed a crash when pipetting a pipe modified by flow config
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.11
 Date: 2025-03-31
