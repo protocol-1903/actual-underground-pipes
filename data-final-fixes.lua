@@ -202,12 +202,12 @@ data:extend{
     key_sequence = "G",
     action = "lua"
   },
-  {
-    type = "custom-input",
-    name = "tomwub-alt-mode",
-    key_sequence = "ALT + V",
-    action = "lua"
-  },
+  -- {
+  --   type = "custom-input",
+  --   name = "tomwub-alt-mode",
+  --   key_sequence = "ALT + V",
+  --   action = "lua"
+  -- },
   {
     type = "collision-layer",
     name = "tomwub-underground",

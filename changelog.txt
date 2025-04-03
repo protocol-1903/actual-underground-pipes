@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.12
 Date: ????
+  Changes:
+    - Removed unused keybind
   Bugfixes:
     - Fixed a crash when placing the last normal pipe in the inventory
     - Fixed a crash when pipetting a pipe modified by flow config
