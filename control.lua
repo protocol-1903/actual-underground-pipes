@@ -35,27 +35,17 @@ end)
 script.on_event(defines.events.on_player_pipette, function (event)
   local player = game.players[event.player_index]
 
-  local entity = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name)
-  local quality = player.selected and player.selected.quality
-
+  -- only run if selected entity (duh)
   if not player.selected then return end
 
-  if entity:sub(1,7) == "tomwub-" and prototypes.item[entity] then
-    if not player.cursor_ghost then
-      -- should fill normally with stack change script
-      storage.tomwub[player.index] = {
-        item = entity,
-        count = -1,
-        quality = quality
-      }
-    end
-    player.clear_cursor()
-    player.cursor_ghost = {
-      name = entity,
-      quality = quality
-    }
-  elseif entity:sub(1,7) == "tomwub-" then
-    name = entity:sub(-6, -3) == "-fc-" and entity:sub(1,-7) or entity:sub(-7, -4) == "-fc-" and entity:sub(1,-8)
+  local name = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name)
+  local quality = player.selected and player.selected.quality
+
+  -- end if not one of ours
+  if name:sub(1,7) ~= "tomwub-" then return end
+
+  -- if item for this entity exists (should be of the same name)
+  if prototypes.item[name] then
     if not player.cursor_ghost then
       -- should fill normally with stack change script
       storage.tomwub[player.index] = {
@@ -67,6 +57,20 @@ script.on_event(defines.events.on_player_pipette, function (event)
     player.clear_cursor()
     player.cursor_ghost = {
       name = name,
+      quality = quality
+    }
+  else -- might be a subentity (duct variant, flow config variant, etc) that has no direct item_to_place
+    if not player.cursor_ghost then
+      -- should fill normally with stack change script
+      storage.tomwub[player.index] = {
+        item = "tomwub-" .. prototypes.entity[name].mineable_properties.products[1].name,
+        count = -1,
+        quality = quality
+      }
+    end
+    player.clear_cursor()
+    player.cursor_ghost = {
+      name = "tomwub-" .. prototypes.entity[name].mineable_properties.products[1].name,
       quality = quality
     }
   end
