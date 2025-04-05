@@ -3,6 +3,7 @@ Version: 0.1.13
 Date: ???
   Bugfixes:
     - Fixed a crash when robots place down underground pipes
+    - Removed fluid windows from underground pipes
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.12
 Date: 2025-04-03
