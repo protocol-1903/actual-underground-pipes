@@ -74,7 +74,6 @@ script.on_event(defines.events.on_player_pipette, function (event)
       quality = quality
     }
   end
-
 end)
 
 -- if ghost underground selected, check if it needs refilling
@@ -213,7 +212,7 @@ function handle(event)
     end
   end
 
-  player = game.players[event.player_index]
+  player = event.player_index and game.players[event.player_index]
   if not player then return end
 
   -- if player just placed last item, then signal to script to update hand again
@@ -412,20 +411,19 @@ function handle(event)
         end
       end
     end
-    if event.player_index then
-      player = game.get_player(event.player_index)
-      if not player then return end
-
-      -- if player just placed last item, then signal to script to update hand again
-      if player.is_cursor_empty() and storage.tomwub[event.player_index].count == 1 then
-        storage.tomwub[event.player_index].count = -1
-
-        -- set ghost cursor
-        player.cursor_ghost = {
-          name = event.entity.name,
-          quality = event.entity.quality
-        }
-      end
+  
+    player = event.player_index and game.players[event.player_index]
+    if not player then return end
+  
+    -- if player just placed last item, then signal to script to update hand again
+    if player.is_cursor_empty() and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then
+      storage.tomwub[player.index].count = -1
+  
+      -- set ghost cursor
+      player.cursor_ghost = {
+        name = event.entity.name,
+        quality = event.entity.quality
+      }
     end
   end
   if event.entity.name == "tomwub-duct-small" or event.entity.name == "tomwub-duct" then
