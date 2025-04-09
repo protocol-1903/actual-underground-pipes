@@ -15,20 +15,19 @@ script.on_event(defines.events.on_player_controller_changed, function (event)
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
   local quality = player.cursor_ghost and player.cursor_ghost.quality or 
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.quality or nil
+  local count = storage.tomwub[player.index].count
 
   if not item or item:sub(1,7) ~= "tomwub-" then return end
 
-  if player.controller_type == defines.controllers.remote then
-    if event.old_type ~= defines.controllers.editor then
-      -- was previously holding item, just put it away so put pipes back into inventory
-      player.get_main_inventory().insert {
-        name = old_item:sub(8, -1),
-        count = old_count,
-        quality = old_quality
-      }
-    end
-    storage.tomwub[player.index].count = -3 - storage.tomwub[player.index].count
+  if player.controller_type == defines.controllers.remote and event.old_type ~= defines.controllers.editor and count > 0 then
+    -- was previously holding item, just put it away so put pipes back into inventory
+    player.character.get_main_inventory().insert {
+      name = item:sub(8, -1),
+      count = count,
+      quality = quality
+    }
   end
+  storage.tomwub[player.index].count = -3 - count
 end)
 
 -- when pipetting an underground pipe, put that one in the hand instead
