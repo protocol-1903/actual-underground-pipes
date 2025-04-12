@@ -1,6 +1,6 @@
 {
   "name": "the-one-mod-with-underground-bits",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "title": "Actual Underground Pipes",
   "author": "protocol_1903",
   "homepage": "https://discord.gg/K3fXMGVc4z",
@@ -10,6 +10,7 @@
     "base",
     "! underground-pipe-pack",
     "(?) no-pipe-touching",
-    "(?) janus"
+    "(?) janus",
+    "(?) combat-mechanics-overhaul"
   ]
 }

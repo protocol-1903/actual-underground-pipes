@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.15
+Date: 2025-04-12
+  Bugfixes:
+    - Fixed pipes colliding with underground pipes when Combat Mechanics Overhaul and Jetpack are enabled
+---------------------------------------------------------------------------------------------------
 Version: 0.1.14
 Date: 2025-04-09
   Bugfixes:
