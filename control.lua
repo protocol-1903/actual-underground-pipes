@@ -214,7 +214,7 @@ function handle(event)
   end
 
   player = event.player_index and game.players[event.player_index]
-  if not player then return end
+  if not player or not storage.tomwub[player.index] then return end
 
   -- if player just placed last item, then signal to script to update hand again
   if player.is_cursor_empty() and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then
