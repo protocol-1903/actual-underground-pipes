@@ -25,7 +25,7 @@ for p, pipe in pairs(data.raw.pipe) do
             pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
           end
           -- save collision mask for later
-          underground_collision_mask = pipe_connection.underground_collision_mask
+          underground_collision_mask = pipe_connection.underground_collision_mask or {layers = {}}
           tag = pipe_connection.connection_category
         end
       end
@@ -46,6 +46,9 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- set heating enrergy of pipe-to-ground to that of the pipe
       underground.heating_energy = pipe.heating_energy
+
+      -- they can only be placed inside the map
+      underground_collision_mask.layers["out_of_map"] = true
 
       -- update collision mask
       if not underground.collision_mask then

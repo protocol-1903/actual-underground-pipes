@@ -8,6 +8,7 @@ Date: ????
     - Consolidated data stage functions into a utility file
   Bugfixes:
     - Added missing locale for settings
+    - Fixed an issue with underground pipes being placeable outside of the map
     - Fixed underground ducts not auto-joining to full lengths
     - Fixed underground ducts being placeable with the wrong items in some cases
     - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds

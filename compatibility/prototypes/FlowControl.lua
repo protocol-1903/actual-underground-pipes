@@ -8,8 +8,11 @@ local pipes = {
   "pipe-straight"
 }
 
-local underground_collision_mask = data.raw["pipe-to-ground"]["pipe-to-ground"].fluid_box.pipe_connections[2].underground_collision_mask
+local underground_collision_mask = data.raw["pipe-to-ground"]["pipe-to-ground"].fluid_box.pipe_connections[2].underground_collision_mask or {layers = {}}
 local tag = data.raw["pipe-to-ground"]["pipe-to-ground"].fluid_box.pipe_connections[2].connection_category
+
+-- they can only be placed inside the map
+underground_collision_mask.layers["out_of_map"] = true
 
 -- solve the underground pipes
 for _, pipe in pairs(pipes) do

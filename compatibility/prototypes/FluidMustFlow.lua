@@ -69,10 +69,13 @@ for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
       pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
     end
     -- save collision mask for later
-    underground_collision_mask = pipe_connection.underground_collision_mask
+    underground_collision_mask = pipe_connection.underground_collision_mask or {layers = {}}
     tag = pipe_connection.connection_category
   end
 end
+
+-- they can only be placed inside the map
+underground_collision_mask.layers["out_of_map"] = true
 
 -- set heating enrergy of pipe-to-ground to that of the pipe
 underground.heating_energy = data.raw["storage-tank"].duct.heating_energy
