@@ -33,6 +33,8 @@ local function reformat(spritesheet, ignore)
   end
 end
 
+local tags = {}
+
 for p, pipe in pairs(data.raw.pipe) do
   for u, underground in pairs(data.raw["pipe-to-ground"]) do
     if u:sub(1,-11) == p then
@@ -95,6 +97,9 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- set the collision mask to the connection_category collected earlier
       underground.collision_mask.layers[tag] = true
+
+      -- save the tag for later use with assembling machines
+      tags[#tags+1] = tag
 
       -- create new item, entity, and collision layer
       data.extend{
@@ -318,5 +323,60 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
   if mods["no-pipe-touching"] then
     underground.solved_by_npt = nil
     underground.npt_compat = nil
+  end
+end
+
+for _, type in pairs{
+  "pump",
+  "storage-tank",
+  "assembling-machine",
+  "furnace",
+  "boiler",
+  "fluid-turret",
+  "mining-drill",
+  "offshore-pump",
+  "generator",
+  "fusion-generator",
+  "fusion-reactor",
+  "thruster",
+  "inserter",
+  "agricultural-tower",
+  "lab",
+  "radar",
+  "reactor",
+  "loader",
+  "infinity-pipe"
+ } do
+  for _, prototype in pairs(data.raw[type] or {}) do
+    local fluid_boxes = {}
+    -- multiple fluid_boxes
+    for _, fluid_box in pairs(prototype.fluid_boxes or {}) do
+      fluid_boxes[#fluid_boxes + 1] = fluid_box
+    end
+    -- single fluid_box
+    if prototype.fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fluid_box end
+    -- input fluid_box
+    if prototype.input_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.input_fluid_box end
+    -- output fluid_box
+    if prototype.output_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.output_fluid_box end
+    -- fuel fluid_box
+    if prototype.fuel_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fuel_fluid_box end
+    -- oxidizer fluid_box
+    if prototype.oxidizer_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.oxidizer_fluid_box end
+    -- energy source fluid_box
+    if prototype.energy_source and prototype.energy_source.type == "fluid" then fluid_boxes[#fluid_boxes + 1] = prototype.energy_source.fluid_box end
+
+    -- change!
+    for f, fluid_box in pairs(fluid_boxes) do
+      if fluid_box then
+        for _, pipe_connection in pairs(fluid_box.pipe_connections or {}) do
+          if pipe_connection.connection_type == "underground" then
+            pipe_connection.connection_type = "normal"
+            pipe_connection.connection_category = tags
+            pipe_connection.max_underground_distance = nil
+          end
+        end
+      end
+    end
   end
 end
