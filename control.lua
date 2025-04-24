@@ -4,10 +4,6 @@ end)
 
 local event_filter = {{filter = "type", type = "pipe"}, {filter = "type", type = "storage-tank"}}
 
-local function is_same_type(self, check)
-  return #self > 7 and self:sub(8) == check or self == check
-end
-
 script.on_event(defines.events.on_player_controller_changed, function (event)
   local player = game.players[event.player_index]
 
@@ -246,7 +242,7 @@ script.on_event("tomwub-swap-layer", function(event)
   local count = player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.count or 0
 
   -- if invalid or not pipe, return
-  if player.is_cursor_empty() or player.cursor_record or not (item:sub(-4, -1) == "pipe" or is_same_type(item, "duct") or is_same_type(item, "duct-small") or is_same_type(item, "duct-long") or is_same_type(item, "duct-curve") or is_same_type(item, "duct-t-junction") or is_same_type(item, "duct-cross")) or item:sub(1, 4) == "hot-" then return end
+  if player.is_cursor_empty() or item:sub(1,7) ~= "tomwub-" and not prototypes.item["tomwub-" .. item] then return end
   -- yes it works no i dont know why
   -- also man .valid_for_read is so powerful
   -- it's hopefully a valid item, so do a little switcheroo

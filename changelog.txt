@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.19
 Date: ????
+  Changes:
+    - Simplified runtime layer swapping logic to better support alternative pipes
   Bugfixes:
     - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds
     - Fixed a crash when attempting to switch layers with an invalid item
