@@ -4,6 +4,7 @@ Date: ????
   Bugfixes:
     - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds
     - Fixed a crash when attempting to switch layers with an invalid item
+    - Fixed a crash when undoing a deconstruction in editor mode and the player's hand is empty
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.18
 Date: 2025-04-17
