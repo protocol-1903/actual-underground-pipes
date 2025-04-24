@@ -2,7 +2,8 @@
 Version: 0.1.19
 Date: ????
   Bugfixes:
-    - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds.
+    - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds
+    - Fixed a crash when attempting to switch layers with an invalid item
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.18
 Date: 2025-04-17

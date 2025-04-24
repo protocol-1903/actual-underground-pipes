@@ -282,7 +282,7 @@ script.on_event("tomwub-swap-layer", function(event)
         slot = stack
       }
     end
-  else -- holding pipe, switch to underground
+  elseif prototypes.item["tomwub-" .. item] then -- verify tomwub variant exists
     -- clear cursor
     player.clear_cursor()
     -- currently ghost entity, swap with ghost
