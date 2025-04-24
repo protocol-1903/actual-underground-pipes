@@ -1,37 +1,4 @@
-local downshift = 10
-
-local function reformat(spritesheet, ignore)
-  for s, sprite in pairs(spritesheet) do
-    if sprite.layers then
-      for _, sprit in pairs(sprite.layers) do
-        sprit.shift = util.by_pixel(0, downshift)
-        if not s:find("visualization") then
-          sprit.tint = {
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value
-          }
-        end
-      end
-    else
-      sprite.shift = util.by_pixel(0, downshift)
-      if not s:find("visualization") then
-        sprite.tint = {
-          settings.startup["pipe-opacity"].value,
-          settings.startup["pipe-opacity"].value,
-          settings.startup["pipe-opacity"].value,
-          settings.startup["pipe-opacity"].value
-        }
-      end
-    end
-    if s:find("disabled_visualization") then
-      sprite.filename = "__the-one-mod-with-underground-bits__/graphics/underground-disabled-visualization.png"
-    elseif s:find("visualization") then
-      sprite.filename = "__the-one-mod-with-underground-bits__/graphics/underground-visualization.png"
-    end
-  end
-end
+local xutil = require "util"
 
 local tags = {}
 
@@ -72,10 +39,10 @@ for p, pipe in pairs(data.raw.pipe) do
         south = {layers = {table.deepcopy(old_visualization.north), old_visualization.south}},
         west = {layers = {table.deepcopy(old_visualization.east), old_visualization.west}}
       }
-      underground.visualization.north.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.east.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.south.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.west.layers[1].shift = util.by_pixel(0, downshift)
+      underground.visualization.north.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.east.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.south.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.west.layers[1].shift = util.by_pixel(0, xutil.downshift)
 
       -- set heating enrergy of pipe-to-ground to that of the pipe
       underground.heating_energy = pipe.heating_energy
@@ -148,12 +115,12 @@ for p, pipe in pairs(data.raw.pipe) do
       tomwub_pipe.collision_mask.layers[tag] = true
 
       -- shift everything down
-      tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, downshift)
-      reformat(tomwub_pipe.pictures)
+      tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, xutil.downshift)
+      xutil.reformat(tomwub_pipe.pictures)
       if tomwub_pipe.fluid_box.pipe_covers == nil then
         tomwub_pipe.fluid_box.pipe_covers = table.deepcopy(pipecoverspictures())
       end
-      reformat(tomwub_pipe.fluid_box.pipe_covers, true)
+      xutil.reformat(tomwub_pipe.fluid_box.pipe_covers)
 
       tomwub_pipe.pictures.gas_flow = nil
       tomwub_pipe.pictures.low_temperature_flow = nil
@@ -169,12 +136,12 @@ for p, pipe in pairs(data.raw.pipe) do
           filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
           size = {160, 160}
         },
-        offset = util.by_pixel(0, downshift),
+        offset = util.by_pixel(0, xutil.downshift),
         distance = 0.65
       }
 
       -- update the selection box of the pipe
-      tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, downshift)[2]}}
+      tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, xutil.downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, xutil.downshift)[2]}}
     
       -- if recipe exists
       if not mods["bztin"] and data.raw.recipe[u] then
@@ -199,6 +166,7 @@ for p, pipe in pairs(data.raw.pipe) do
 end
 
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
 
 data:extend{
   {
@@ -261,10 +229,10 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
       end
 
       -- shift them all down
-      underground.visualization.north.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.east.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.south.layers[1].shift = util.by_pixel(0, downshift)
-      underground.visualization.west.layers[1].shift = util.by_pixel(0, downshift)
+      underground.visualization.north.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.east.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.south.layers[1].shift = util.by_pixel(0, xutil.downshift)
+      underground.visualization.west.layers[1].shift = util.by_pixel(0, xutil.downshift)
 
         -- copy old visualisations on top of new ones
       if old_visualization.north.layers then

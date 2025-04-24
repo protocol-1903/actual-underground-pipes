@@ -35,42 +35,26 @@ script.on_event(defines.events.on_player_pipette, function (event)
   -- only run if selected entity (duh)
   if not player.selected then return end
 
-  local name = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_name or player.selected.name)
+  local prototype = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_prototype or player.selected.prototype)
+  local name = prototype.items_to_place_this and prototype.items_to_place_this[1] and prototype.items_to_place_this[1].name
   local quality = player.selected and player.selected.quality
 
   -- end if not one of ours
-  if name:sub(1,7) ~= "tomwub-" then return end
+  if prototype.name:sub(1,7) ~= "tomwub-" or not prototypes.item["tomwub-" .. name] then return end
 
-  -- if item for this entity exists (should be of the same name)
-  if prototypes.item[name] then
-    if not player.cursor_ghost then
-      -- should fill normally with stack change script
-      storage.tomwub[player.index] = {
-        item = name,
-        count = -1,
-        quality = quality
-      }
-    end
-    player.clear_cursor()
-    player.cursor_ghost = {
-      name = name,
-      quality = quality
-    }
-  else -- might be a subentity (duct variant, flow config variant, etc) that has no direct item_to_place
-    if not player.cursor_ghost then
-      -- should fill normally with stack change script
-      storage.tomwub[player.index] = {
-        item = "tomwub-" .. prototypes.entity[name].mineable_properties.products[1].name,
-        count = -1,
-        quality = quality
-      }
-    end
-    player.clear_cursor()
-    player.cursor_ghost = {
-      name = "tomwub-" .. prototypes.entity[name].mineable_properties.products[1].name,
+  if not player.cursor_ghost then
+    -- should fill normally with stack change script
+    storage.tomwub[player.index] = {
+      item = "tomwub-" .. name,
+      count = -1,
       quality = quality
     }
   end
+  player.clear_cursor()
+  player.cursor_ghost = {
+    name = "tomwub-" .. name,
+    quality = quality
+  }
 end)
 
 -- if ghost underground selected, check if it needs refilling
@@ -410,17 +394,18 @@ function handle(event)
     end
   
     player = event.player_index and game.players[event.player_index]
-    if not player then return end
-  
-    -- if player just placed last item, then signal to script to update hand again
-    if player.is_cursor_empty() and storage.tomwub[player.index].item and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then
-      storage.tomwub[player.index].count = -1
-  
-      -- set ghost cursor
-      player.cursor_ghost = {
-        name = event.entity.name,
-        quality = event.entity.quality
-      }
+    if player then
+
+      -- if player just placed last item, then signal to script to update hand again
+      if player.is_cursor_empty() and storage.tomwub[player.index].item and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then
+        storage.tomwub[player.index].count = -1
+
+        -- set ghost cursor
+        player.cursor_ghost = {
+          name = event.entity.name,
+          quality = event.entity.quality
+        }
+      end
     end
   end
   if event.entity.name == "tomwub-duct-small" or event.entity.name == "tomwub-duct" then

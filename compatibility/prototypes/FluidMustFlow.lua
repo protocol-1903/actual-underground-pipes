@@ -1,13 +1,13 @@
 if not mods["FluidMustFlow"] then return end
 
-local downshift = 10
+local downshift = require("__the-one-mod-with-underground-bits__.util").downshift
 local pipes = {
   "duct-curve",
   "duct-t-junction",
+  "duct-cross",
   "duct",
   "duct-small",
   "duct-long",
-  "duct-cross"
 }
 
 local function reformat(spritesheet, ignore)
@@ -122,7 +122,7 @@ end
 -- end
 
 -- solve the underground ducts
-for _, pipe in pairs(pipes) do
+for i, pipe in pairs(pipes) do
   local p = pipe
   local pipe = data.raw["storage-tank"][p]
   -- create new item, entity, and collision layer
@@ -161,7 +161,7 @@ for _, pipe in pairs(pipes) do
   }
   
   tomwub_pipe = data.raw["storage-tank"]["tomwub-" .. p]
-  if settings.startup["fmf-enable-duct-auto-join"].value then
+  if settings.startup["fmf-enable-duct-auto-join"].value and i > 3 then
     tomwub_pipe.placeable_by = {
       {item = "tomwub-duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4},
       {item = "duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4}
@@ -186,18 +186,6 @@ for _, pipe in pairs(pipes) do
   tomwub_pipe.pictures.low_temperature_flow = nil
   tomwub_pipe.pictures.middle_temperature_flow = nil
   tomwub_pipe.pictures.high_temperature_flow = nil
-
-  -- scale down the fluid icon
-
-  -- add placement visualization
-  -- tomwub_pipe.radius_visualisation_specification = {
-  --   sprite = {
-  --     filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
-  --     size = {160, 160}
-  --   },
-  --   offset = util.by_pixel(0, downshift),
-  --   distance = 0.65
-  -- }
 
   -- update the selection box of the pipe
   tomwub_pipe.selection_box = {{tomwub_pipe.selection_box[1][1] * 0.8, tomwub_pipe.selection_box[1][2] * 0.8}, {tomwub_pipe.selection_box[2][1] * 0.8, tomwub_pipe.selection_box[2][2] * 0.8}}

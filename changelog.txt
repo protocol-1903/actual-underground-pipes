@@ -1,10 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.19
 Date: ????
+  Features:
+    - Full Flow Control compatability
   Changes:
     - Simplified runtime layer swapping logic to better support alternative pipes
+    - Consolidated data stage functions into a utility file
   Bugfixes:
     - Added missing locale for settings
+    - Fixed underground ducts not auto-joining to full lengths
+    - Fixed underground ducts being placeable with the wrong items in some cases
     - Fixed an issue with underground connections on non-pipe entities not becoming psuedo-undergrounds
     - Fixed a crash when attempting to switch layers with an invalid item
     - Fixed a crash when undoing a deconstruction in editor mode and the player's hand is empty
