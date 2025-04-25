@@ -56,7 +56,9 @@ for _, pipe in pairs(pipes) do
   end
 
   -- set the collision mask to the connection_category collected earlier
-  tomwub_pipe.collision_mask.layers[tag] = true
+  if data.raw.tile["out-of-map"] then
+    underground_collision_mask.layers["out_of_map"] = true
+  end
 
   -- shift everything down
   xutil.reformat(tomwub_pipe.fluid_box.pipe_covers)

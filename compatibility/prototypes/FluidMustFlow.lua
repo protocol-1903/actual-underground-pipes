@@ -75,7 +75,10 @@ for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
 end
 
 -- they can only be placed inside the map
-underground_collision_mask.layers["out_of_map"] = true
+if data.raw.tile["out-of-map"] then
+  underground_collision_mask.layers["out_of_map"] = true
+end
+
 
 -- set heating enrergy of pipe-to-ground to that of the pipe
 underground.heating_energy = data.raw["storage-tank"].duct.heating_energy

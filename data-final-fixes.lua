@@ -48,8 +48,10 @@ for p, pipe in pairs(data.raw.pipe) do
       underground.heating_energy = pipe.heating_energy
 
       -- they can only be placed inside the map
-      underground_collision_mask.layers["out_of_map"] = true
-
+      if data.raw.tile["out-of-map"] then
+        underground_collision_mask.layers["out_of_map"] = true
+      end
+      
       -- update collision mask
       if not underground.collision_mask then
         underground.collision_mask = {
