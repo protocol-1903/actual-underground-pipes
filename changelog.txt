@@ -2,6 +2,7 @@
 Version: 0.1.21
 Date: 2025-04-28
   Bugfixes:
+    - Fixed a crash when trying to delete sprite layers (showed up when combined with Color Coded Pipes)
     - Fixed a crash when on base version < 2.0.44
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.20

@@ -15,7 +15,7 @@ xutil.reformat = function(spritesheet)
           }
         end
         if sprit.filename:sub(-10) == "shadow.png" then
-          sprite.layers[i] = nil
+          sprit.tint = {0, 0, 0, 0}
         end
       end
     elseif sprite.north then
