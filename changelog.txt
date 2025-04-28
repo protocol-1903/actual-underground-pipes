@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.22
+Date: 2025-04-28
+  Changes:
+    - Re-added the fix to prevent underground pipes from being placed out of map (requires v2.0.44 or higher)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.21
 Date: 2025-04-28
   Bugfixes:
