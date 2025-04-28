@@ -1,13 +1,13 @@
 {
   "name": "the-one-mod-with-underground-bits",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "title": "Actual Underground Pipes",
   "author": "protocol_1903",
   "homepage": "https://discord.gg/K3fXMGVc4z",
   "description": "What? Pipes that are actually... underground!?",
   "factorio_version": "2.0",
   "dependencies": [
-    "base",
+    "base <= 2.0.43",
     "! underground-pipe-pack",
     "(?) no-pipe-touching",
     "(?) janus",
