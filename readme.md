@@ -26,6 +26,7 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 
 # Compatibility
 - [Fluid Must Flow](https://mods.factorio.com/mod/FluidMustFlow): Fluid Must Flow is fully compatible! Since v0.1.6, I have added full compatibility. There are some rough edges, but those will be fixed over time as I get player feedback on the changes.
+- [Elevated Pipes](https://mods.factorio.com/mod/elevated-pipes): Psuedo compatibility in that Elevated Pipes function as normal, and Underground Pipes do not interact with them. Saves using existing Elevated Pipes will not be modified.
 - [Advanced Fluid Handling](https://mods.factorio.com/mod/underground-pipe-pack): Unfortunately, AUP does not have native compatibility with AFH. There's nothing that can be done in AUP to make it work, it would take some major rework of AFH scripting to make the two mods compatible. I don't see this as much of an issue, since both mods fill relatively similar roles. If it's brought up enough, something can probably be figured out.
 - Supports all other mods, hopefully. If something doesn't work, let me know!
 

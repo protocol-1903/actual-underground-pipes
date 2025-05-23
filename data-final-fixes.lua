@@ -171,6 +171,7 @@ for p, pipe in pairs(data.raw.pipe) do
 end
 
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/elevated-pipes")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
 
 data:extend{
@@ -321,35 +322,39 @@ for _, type in pairs{
   "infinity-pipe"
  } do
   for _, prototype in pairs(data.raw[type] or {}) do
-    local fluid_boxes = {}
-    -- multiple fluid_boxes
-    for _, fluid_box in pairs(prototype.fluid_boxes or {}) do
-      fluid_boxes[#fluid_boxes + 1] = fluid_box
-    end
-    -- single fluid_box
-    if prototype.fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fluid_box end
-    -- input fluid_box
-    if prototype.input_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.input_fluid_box end
-    -- output fluid_box
-    if prototype.output_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.output_fluid_box end
-    -- fuel fluid_box
-    if prototype.fuel_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fuel_fluid_box end
-    -- oxidizer fluid_box
-    if prototype.oxidizer_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.oxidizer_fluid_box end
-    -- energy source fluid_box
-    if prototype.energy_source and prototype.energy_source.type == "fluid" then fluid_boxes[#fluid_boxes + 1] = prototype.energy_source.fluid_box end
+    if not prototype.ignore_by_tomwub then
+      local fluid_boxes = {}
+      -- multiple fluid_boxes
+      for _, fluid_box in pairs(prototype.fluid_boxes or {}) do
+        fluid_boxes[#fluid_boxes + 1] = fluid_box
+      end
+      -- single fluid_box
+      if prototype.fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fluid_box end
+      -- input fluid_box
+      if prototype.input_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.input_fluid_box end
+      -- output fluid_box
+      if prototype.output_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.output_fluid_box end
+      -- fuel fluid_box
+      if prototype.fuel_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.fuel_fluid_box end
+      -- oxidizer fluid_box
+      if prototype.oxidizer_fluid_box then fluid_boxes[#fluid_boxes + 1] = prototype.oxidizer_fluid_box end
+      -- energy source fluid_box
+      if prototype.energy_source and prototype.energy_source.type == "fluid" then fluid_boxes[#fluid_boxes + 1] = prototype.energy_source.fluid_box end
 
-    -- change!
-    for f, fluid_box in pairs(fluid_boxes) do
-      if fluid_box then
-        for _, pipe_connection in pairs(fluid_box.pipe_connections or {}) do
-          if pipe_connection.connection_type == "underground" then
-            pipe_connection.connection_type = "normal"
-            pipe_connection.connection_category = tags
-            pipe_connection.max_underground_distance = nil
+      -- change!
+      for f, fluid_box in pairs(fluid_boxes) do
+        if fluid_box then
+          for _, pipe_connection in pairs(fluid_box.pipe_connections or {}) do
+            if pipe_connection.connection_type == "underground" then
+              pipe_connection.connection_type = "normal"
+              pipe_connection.connection_category = tags
+              pipe_connection.max_underground_distance = nil
+            end
           end
         end
       end
+    else
+      prototype.ignore_by_tomwub = nil
     end
   end
 end

@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.25
+Date: 2025-05-23
+  Bugfixes:
+    - Fixed a crash when loaded with Elevated Pipes. Elevated Pipes will function as normal and NOT work like AUP undergrounds.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.24
 Date: 2025-04-29
   Changes:
