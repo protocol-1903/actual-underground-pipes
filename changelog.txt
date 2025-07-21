@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.26
+Date: 2025-07-21
+  Changes:
+    - Pipe placement and hover visualization will only appear if the opacity is set to 0
+  Bugfixes:
+    - Fixed underground pipes being able to take indirect damage
+---------------------------------------------------------------------------------------------------
 Version: 0.1.25
 Date: 2025-05-23
   Bugfixes:

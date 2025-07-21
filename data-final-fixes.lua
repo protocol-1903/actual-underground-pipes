@@ -2,6 +2,16 @@ local xutil = require "util"
 
 local tags = {}
 
+local resistances = {}
+
+for prototype in pairs(data.raw["damage-type"]) do
+  resistances[#resistances+1] = {
+    type = prototype,
+    decrease = 100,
+    percent = 100
+  }
+end
+
 for p, pipe in pairs(data.raw.pipe) do
   for u, underground in pairs(data.raw["pipe-to-ground"]) do
     if u:sub(1,-11) == p then
@@ -95,7 +105,9 @@ for p, pipe in pairs(data.raw.pipe) do
           collision_box = pipe.collision_box,
           selection_box = pipe.selection_box,
           collision_mask = underground_collision_mask or { layers = {} },
-          flags = {"not-upgradable", "player-creation", "placeable-neutral"},
+          flags = {"not-upgradable", "player-creation", "placeable-neutral", "not-flammable"},
+          resistances = resistances,
+          hide_resistances = true,
           horizontal_window_bounding_box = {{0,0},{0,0}},
           vertical_window_bounding_box = {{0,0},{0,0}},
           icon_draw_specification = table.deepcopy(pipe.icon_draw_specification or data.raw.pipe.pipe.icon_draw_specification),
@@ -136,14 +148,16 @@ for p, pipe in pairs(data.raw.pipe) do
       tomwub_pipe.icon_draw_specification.scale = 0.35
 
       -- add placement visualization
-      tomwub_pipe.radius_visualisation_specification = {
-        sprite = {
-          filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
-          size = {160, 160}
-        },
-        offset = util.by_pixel(0, xutil.downshift),
-        distance = 0.65
-      }
+      if settings.startup["pipe-opacity"].value == 0 then
+        tomwub_pipe.radius_visualisation_specification = {
+          sprite = {
+            filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
+            size = {160, 160}
+          },
+          offset = util.by_pixel(0, xutil.downshift),
+          distance = 0.65
+        }
+      end
 
       -- update the selection box of the pipe
       tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, xutil.downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, xutil.downshift)[2]}}
