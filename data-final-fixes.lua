@@ -333,7 +333,8 @@ for _, type in pairs{
   "radar",
   "reactor",
   "loader",
-  "infinity-pipe"
+  "infinity-pipe",
+  "valve"
  } do
   for _, prototype in pairs(data.raw[type] or {}) do
     if not prototype.ignore_by_tomwub then
