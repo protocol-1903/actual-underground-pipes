@@ -163,13 +163,37 @@ for p, pipe in pairs(data.raw.pipe) do
       tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, xutil.downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, xutil.downshift)[2]}}
     
       -- if recipe exists
-      if not mods["bztin"] and data.raw.recipe[u] then
-        local ingredients = data.raw.recipe[u].ingredients
-        data.raw.recipe[u].ingredients = {}
-        -- add ingredient if not the associated pipe
-        for _, ingredient in pairs(ingredients) do
-          if not data.raw.pipe[ingredient.name] then -- if not a pipe then add to ingredients
-            data.raw.recipe[u].ingredients[#data.raw.recipe[u].ingredients+1] = ingredient
+      if not mods["bztin"] then
+        -- fix normal recipes
+        for _, recipe in pairs{
+          u,
+          "casting-" .. u
+        } do
+          log(recipe)
+          -- if recipe exists
+          if data.raw.recipe[recipe] then
+            log(recipe)
+            local ingredients = data.raw.recipe[recipe].ingredients
+            data.raw.recipe[recipe].ingredients = {}
+            -- add ingredient if not the associated pipe
+            for _, ingredient in pairs(ingredients) do
+              if not ingredient.name:find("pipe") then
+                data.raw.recipe[recipe].ingredients[#data.raw.recipe[recipe].ingredients+1] = ingredient
+              end
+            end
+          end
+          
+          -- if recycling recipe exists
+          if data.raw.recipe[recipe .. "-recycling"] then
+            log(recipe .. "-recycling")
+            local results = data.raw.recipe[recipe .. "-recycling"].results
+            data.raw.recipe[recipe .. "-recycling"].results = {}
+            -- add result if not the associated pipe
+            for _, result in pairs(results) do
+              if not result.name:find("pipe") then
+                data.raw.recipe[recipe .. "-recycling"].results[#data.raw.recipe[recipe .. "-recycling"].results+1] = result
+              end
+            end
           end
         end
       elseif mods["bztin"] and data.raw.recipe[u] then
@@ -177,6 +201,20 @@ for p, pipe in pairs(data.raw.pipe) do
         for _, ingredient in pairs(data.raw.recipe[u].ingredients) do
           if data.raw.pipe[ingredient.name] and ingredient.amount > 2 then
             ingredient.amount = 2 -- if a pipe, set amount to 2
+          end
+        end
+          
+        -- if recycling recipe exists
+        if data.raw.recipe[recipe .. "-recycling"] then
+          log(recipe .. "-recycling")
+          local results = data.raw.recipe[recipe .. "-recycling"].results
+          data.raw.recipe[recipe .. "-recycling"].results = {}
+          -- add result if not the associated pipe
+          for _, result in pairs(results) do
+            if data.raw.pipe[result.name] and result.amount > 2 then
+              result.amount = 1
+              result.probability = 0.5
+            end
           end
         end
       end
@@ -293,15 +331,36 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
       }
     end
     underground.collision_mask.layers[tag] = true
-    
-    -- if recipe exists
-    if data.raw.recipe[u] then
-      local ingredients = data.raw.recipe[u].ingredients
-      data.raw.recipe[u].ingredients = {}
-      -- add ingredient if not the associated pipe
-      for _, ingredient in pairs(ingredients) do
-        if not ingredient.name:find("pipe") then
-          data.raw.recipe[u].ingredients[#data.raw.recipe[u].ingredients+1] = ingredient
+
+    -- fix normal recipes
+    for _, recipe in pairs{
+      u,
+      "casting-" .. u
+    } do
+      log(recipe)
+      -- if recipe exists
+      if data.raw.recipe[recipe] then
+        log(recipe)
+        local ingredients = data.raw.recipe[recipe].ingredients
+        data.raw.recipe[recipe].ingredients = {}
+        -- add ingredient if not the associated pipe
+        for _, ingredient in pairs(ingredients) do
+          if not ingredient.name:find("pipe") then
+            data.raw.recipe[recipe].ingredients[#data.raw.recipe[recipe].ingredients+1] = ingredient
+          end
+        end
+      end
+      
+      -- if recycling recipe exists
+      if data.raw.recipe[recipe .. "-recycling"] then
+        log(recipe .. "-recycling")
+        local results = data.raw.recipe[recipe .. "-recycling"].results
+        data.raw.recipe[recipe .. "-recycling"].results = {}
+        -- add result if not the associated pipe
+        for _, result in pairs(results) do
+          if not result.name:find("pipe") then
+            data.raw.recipe[recipe .. "-recycling"].results[#data.raw.recipe[recipe .. "-recycling"].results+1] = result
+          end
         end
       end
     end

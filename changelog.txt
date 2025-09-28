@@ -4,6 +4,7 @@ Date: ????
   Changes:
     - Proper automatic valve support
   Bugfixes:
+    - Fixed casting recipes still requiring pipes
     - Fixed underground pipes not being placeable under belts when Space Exploration is enabled (requires SE v0.7.34+)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.26
