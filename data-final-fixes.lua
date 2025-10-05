@@ -205,10 +205,10 @@ for p, pipe in pairs(data.raw.pipe) do
         end
           
         -- if recycling recipe exists
-        if data.raw.recipe[recipe .. "-recycling"] then
-          log(recipe .. "-recycling")
-          local results = data.raw.recipe[recipe .. "-recycling"].results
-          data.raw.recipe[recipe .. "-recycling"].results = {}
+        if data.raw.recipe[u .. "-recycling"] then
+          log(u .. "-recycling")
+          local results = data.raw.recipe[u .. "-recycling"].results
+          data.raw.recipe[u .. "-recycling"].results = {}
           -- add result if not the associated pipe
           for _, result in pairs(results) do
             if data.raw.pipe[result.name] and result.amount > 2 then
