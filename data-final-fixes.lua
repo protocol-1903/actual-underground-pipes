@@ -366,6 +366,8 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
   end
 end
 
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/space-exploration")
+
 for _, type in pairs{
   "pump",
   "storage-tank",
