@@ -42,7 +42,6 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- create new visualizations for the pipe-to-ground
       local old_visualization = underground.visualization or data.raw["pipe-to-ground"]["pipe-to-ground"].visualization
-      log("solving visualizations")
       underground.visualization = {
         north = {layers = {table.deepcopy(old_visualization.south), old_visualization.north}},
         east = {layers = {table.deepcopy(old_visualization.west), old_visualization.east}},
@@ -169,10 +168,8 @@ for p, pipe in pairs(data.raw.pipe) do
           u,
           "casting-" .. u
         } do
-          log(recipe)
           -- if recipe exists
           if data.raw.recipe[recipe] then
-            log(recipe)
             local ingredients = data.raw.recipe[recipe].ingredients
             data.raw.recipe[recipe].ingredients = {}
             -- add ingredient if not the associated pipe
@@ -185,7 +182,6 @@ for p, pipe in pairs(data.raw.pipe) do
           
           -- if recycling recipe exists
           if data.raw.recipe[recipe .. "-recycling"] then
-            log(recipe .. "-recycling")
             local results = data.raw.recipe[recipe .. "-recycling"].results
             data.raw.recipe[recipe .. "-recycling"].results = {}
             -- add result if not the associated pipe
@@ -206,7 +202,6 @@ for p, pipe in pairs(data.raw.pipe) do
           
         -- if recycling recipe exists
         if data.raw.recipe[u .. "-recycling"] then
-          log(u .. "-recycling")
           local results = data.raw.recipe[u .. "-recycling"].results
           data.raw.recipe[u .. "-recycling"].results = {}
           -- add result if not the associated pipe
@@ -338,10 +333,8 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
       u,
       "casting-" .. u
     } do
-      log(recipe)
       -- if recipe exists
       if data.raw.recipe[recipe] then
-        log(recipe)
         local ingredients = data.raw.recipe[recipe].ingredients
         data.raw.recipe[recipe].ingredients = {}
         -- add ingredient if not the associated pipe
@@ -354,7 +347,6 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
       
       -- if recycling recipe exists
       if data.raw.recipe[recipe .. "-recycling"] then
-        log(recipe .. "-recycling")
         local results = data.raw.recipe[recipe .. "-recycling"].results
         data.raw.recipe[recipe .. "-recycling"].results = {}
         -- add result if not the associated pipe
