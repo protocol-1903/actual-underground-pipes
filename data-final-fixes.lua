@@ -226,7 +226,6 @@ require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMus
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/elevated-pipes")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/elevated-space-pipes")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
-require("__the-one-mod-with-underground-bits__/compatibility/prototypes/space-exploration")
 
 data:extend{
   {
@@ -374,6 +373,8 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     underground.npt_compat = nil
   end
 end
+
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/space-exploration")
 
 for _, type in pairs{
   "pump",
