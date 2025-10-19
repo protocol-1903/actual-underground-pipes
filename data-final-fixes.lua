@@ -221,6 +221,7 @@ require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMus
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/elevated-pipes")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/elevated-space-pipes")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/dredgeworks")
 
 data:extend{
   {
