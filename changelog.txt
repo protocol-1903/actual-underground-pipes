@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.33
+Date: 2025-10-28
+  Compatibility:
+    - Marked pipe plus as incompatible. The mods cannot work together due to engine limitations.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.32
 Date: 2025-10-19
   Compatibility:
