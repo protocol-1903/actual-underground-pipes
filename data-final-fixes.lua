@@ -41,17 +41,48 @@ for p, pipe in pairs(data.raw.pipe) do
       end
 
       -- create new visualizations for the pipe-to-ground
-      local old_visualization = underground.visualization or data.raw["pipe-to-ground"]["pipe-to-ground"].visualization
       underground.visualization = {
-        north = {layers = {table.deepcopy(old_visualization.south), old_visualization.north}},
-        east = {layers = {table.deepcopy(old_visualization.west), old_visualization.east}},
-        south = {layers = {table.deepcopy(old_visualization.north), old_visualization.south}},
-        west = {layers = {table.deepcopy(old_visualization.east), old_visualization.west}}
+        north = {
+          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
+          priority = "extra-high",
+          x = 64,
+          width = 64,
+          height = 128,
+          scale = 0.5,
+          shift = util.by_pixel(0, 16),
+          flags = {"icon"}
+        },
+        south = {
+          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
+          priority = "extra-high",
+          x = 192,
+          width = 64,
+          height = 128,
+          scale = 0.5,
+          shift = util.by_pixel(0, 16),
+          flags = {"icon"}
+        },
+        west = {
+          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
+          priority = "extra-high",
+          x = 256,
+          width = 64,
+          height = 128,
+          scale = 0.5,
+          shift = util.by_pixel(0, 16),
+          flags = {"icon"}
+        },
+        east = {
+          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
+          priority = "extra-high",
+          x = 128,
+          width = 64,
+          height = 128,
+          scale = 0.5,
+          shift = util.by_pixel(0, 16),
+          flags = {"icon"}
+        }
       }
-      underground.visualization.north.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.east.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.south.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.west.layers[1].shift = util.by_pixel(0, xutil.downshift)
 
       -- set heating enrergy of pipe-to-ground to that of the pipe
       underground.heating_energy = pipe.heating_energy
@@ -229,23 +260,12 @@ data:extend{
     name = "tomwub-swap-layer",
     key_sequence = "G",
     action = "lua"
-  },
-  -- {
-  --   type = "custom-input",
-  --   name = "tomwub-alt-mode",
-  --   key_sequence = "ALT + V",
-  --   action = "lua"
-  -- },
-  {
+  }, -- only create a generic collision mask when NPT is not installed
+  not mods["no-pipe-touching"] and {
     type = "collision-layer",
     name = "tomwub-underground",
-  }
+  } or nil
 }
-
-local stripped_ptg_vis = data.raw["pipe-to-ground"]["pipe-to-ground"].visualization
-for d, direction in pairs(stripped_ptg_vis) do
-  stripped_ptg_vis[d] = direction.layers[2]
-end
 
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
   if not underground.solved_by_tomwub then
