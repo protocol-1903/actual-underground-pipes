@@ -68,6 +68,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
 
   local item = player.cursor_ghost and player.cursor_ghost.name.name or
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
+  local count = not player.cursor_ghost and player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.count or nil
   local quality = player.cursor_ghost and player.cursor_ghost.quality or 
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.quality or nil
 
@@ -109,15 +110,46 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       inventory = player.get_main_inventory().index,
       slot = stack
     }
-  elseif player.is_cursor_empty() and old_count > 0 and old_item:sub(1,7) == "tomwub-" then
+  elseif old_count > 0 and old_item:sub(1,7) == "tomwub-" then
     -- was previously holding item, just put it away so put pipes back into inventory
 
     -- get amount added to inventory
-    local amount_inserted = player.get_main_inventory().insert {
+    local inserted = player.get_main_inventory().insert {
       name = old_item:sub(8, -1),
       count = old_count,
       quality = old_quality
     }
+
+    -- something must be obstructing the cursor, put it back
+    if inserted ~= old_count then
+      -- the only reason to do it conditionally is if the player cannot insert them, then it'll play some noise and notify the player for no reason
+      if count and player.can_insert{
+        name = item,
+        count = count,
+        quality = quality
+      } then
+        player.clear_cursor()
+      end
+
+      -- notify the player
+      player.play_sound{path = "utility/cannot_build"}
+      player.create_local_flying_text{text = {"cant-clear-cursor", prototypes.item[old_item].localised_name}, create_at_cursor = true}
+      
+      player.cursor_stack.set_stack{
+        name = old_item,
+        count = old_count - inserted,
+        quality = old_quality
+      }
+
+      -- set the previous item and count
+      storage.tomwub[event.player_index] = {
+        item = old_item,
+        count = -2,
+        quality = old_quality
+      }
+
+      return -- return early, we don't want to run other code
+    end
   elseif not player.is_cursor_empty() and old_count < -3 and item:sub(1,7) == "tomwub-" then
 
     local amount_removed = player.controller_type == defines.controllers.editor and -3 - old_count or player.get_main_inventory().remove{
@@ -254,10 +286,10 @@ script.on_event("tomwub-swap-layer", function(event)
       local _, stack = player.get_main_inventory().find_empty_stack()
       -- set hand location to preserve place for player to put items
       if stack then
-      player.hand_location = {
-        inventory = player.get_main_inventory().index,
-        slot = stack
-      }
+        player.hand_location = {
+          inventory = player.get_main_inventory().index,
+          slot = stack
+        }
       end
     end
   elseif prototypes.item["tomwub-" .. item] then -- verify tomwub variant exists
@@ -290,10 +322,10 @@ script.on_event("tomwub-swap-layer", function(event)
       local _, stack = player.get_main_inventory().find_empty_stack()
       -- set hand location to preserve place for player to put items (if possible)
       if stack then
-      player.hand_location = {
-        inventory = player.get_main_inventory().index,
-        slot = stack
-      }
+        player.hand_location = {
+          inventory = player.get_main_inventory().index,
+          slot = stack
+        }
       end
     end
   end
