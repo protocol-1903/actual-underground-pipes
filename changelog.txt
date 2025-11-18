@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 2025-10-28
+Date: 2025-11-18
   Changes:
     - Added a notification to the player when their cursor cannot be cleared of underground pipes
     - Underground pipes are now rendered as underground in the pipe visualizer. Resolves https://github.com/protocol-1903/actual-underground-pipes/issues/5
