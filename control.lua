@@ -231,15 +231,11 @@ script.on_event("tomwub-swap-layer", function(event)
   -- also man .valid_for_read is so powerful
   -- it's hopefully a valid item, so do a little switcheroo
 
-  local stack_size = player.cursor_ghost and player.cursor_ghost.name.stack_size or
-    player.cursor_stack.prototype.stack_size
-
   -- if the player somehow broke this... give up
   if storage.tomwub[event.player_index] == nil then goto continue end
 
   -- holding underground, switch to pipe
   if item:sub(1,7) == "tomwub-" then
-    -- clear cursor
     player.clear_cursor()
     -- currently ghost entity, swap with ghost
     if count == 0 then
@@ -248,19 +244,21 @@ script.on_event("tomwub-swap-layer", function(event)
         quality = quality
       }
     else -- non-ghost, insert from inventory
-      -- find open slot for hand to go
-      local _, stack = player.get_main_inventory().find_empty_stack()
       -- put into cursor
       player.cursor_stack.set_stack {
         name = item:sub(8, -1),
         count = count,
         quality = quality
       }
+      -- find open slot for hand to go
+      local _, stack = player.get_main_inventory().find_empty_stack()
       -- set hand location to preserve place for player to put items
+      if stack then
       player.hand_location = {
         inventory = player.get_main_inventory().index,
         slot = stack
       }
+      end
     end
   elseif prototypes.item["tomwub-" .. item] then -- verify tomwub variant exists
     -- clear cursor
@@ -278,19 +276,25 @@ script.on_event("tomwub-swap-layer", function(event)
         count = count,
         quality = quality
       }
-      -- find open slot for hand to go
-      local _, stack = player.get_main_inventory().find_empty_stack()
+
+      -- if removed, then it was taken from inventory, else it was from another container
+      removed = removed > 0 and removed or count
+
       -- put into cursor
       player.cursor_stack.set_stack {
         name = "tomwub-" .. item,
         count = removed,
         quality = quality
       }
-      -- set hand location to preserve place for player to put items
+      -- find open slot for hand to go
+      local _, stack = player.get_main_inventory().find_empty_stack()
+      -- set hand location to preserve place for player to put items (if possible)
+      if stack then
       player.hand_location = {
         inventory = player.get_main_inventory().index,
         slot = stack
       }
+      end
     end
   end
 

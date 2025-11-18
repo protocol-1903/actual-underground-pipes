@@ -3,6 +3,8 @@ Version: 1.0.0
 Date: 2025-10-28
   Changes:
     - Underground pipes are now rendered as underground in the pipe visualizer. Resolves https://github.com/protocol-1903/actual-underground-pipes/issues/5
+  Bugfixes:
+    - Fixed a crash from swapping layers with an item stack picked up from an external inventory
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.33
 Date: 2025-10-28
