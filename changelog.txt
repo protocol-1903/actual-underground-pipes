@@ -2,8 +2,10 @@
 Version: 1.0.0
 Date: 2025-11-18
   Changes:
-    - Added a notification to the player when their cursor cannot be cleared of underground pipes
     - Underground pipes are now rendered as underground in the pipe visualizer. Resolves https://github.com/protocol-1903/actual-underground-pipes/issues/5
+    - Updated thumbnail with new graphics
+    - Updated mod description and pictures
+    - Added a notification to the player when their cursor cannot be cleared of underground pipes
   Bugfixes:
     - Fixed a crash from swapping layers with an item stack picked up from an external inventory
     - Fixed that item stacks would be deleted when the player selected another item from the inventory when in underground placement mode. Resolves https://github.com/protocol-1903/actual-underground-pipes/issues/8
