@@ -110,7 +110,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       inventory = player.get_main_inventory().index,
       slot = stack
     }
-  elseif old_count > 0 and old_item:sub(1,7) == "tomwub-" then
+  elseif old_count > 0 and old_item:sub(1,7) == "tomwub-" and item ~= old_item then
     -- was previously holding item, just put it away so put pipes back into inventory
 
     -- get amount added to inventory
@@ -134,7 +134,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       -- notify the player
       player.play_sound{path = "utility/cannot_build"}
       player.create_local_flying_text{text = {"cant-clear-cursor", prototypes.item[old_item].localised_name}, create_at_cursor = true}
-      
+
       player.cursor_stack.set_stack{
         name = old_item,
         count = old_count - inserted,
