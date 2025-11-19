@@ -158,8 +158,6 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       quality = quality
     }
 
-    if removed == 0 then goto continue end
-
     -- find open slot for hand to go
     local _, stack = player.get_main_inventory().find_empty_stack()
 
