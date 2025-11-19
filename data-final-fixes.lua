@@ -150,7 +150,7 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- update the selection box of the pipe
       tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, xutil.downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, xutil.downshift)[2]}}
-    
+      
       -- attempt to fix recipes
       xutil.adjust_recipes(u)
     end
@@ -200,45 +200,24 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
       end
     end
 
-    for d, direction in pairs(directions) do
-      local old_visualization = underground.visualization or stripped_ptg_vis
-      underground.visualization = {}
-      for i=0,3 do
-        -- increment new direction from offset vector
-        local vis_dir = (direction + i * 4) % 16
-        -- add to base sprite
-        underground.visualization[i == 0 and "north" or i == 1 and "east" or i == 2 and "south" or i == 3 and "west"] = {
-          layers = {table.deepcopy(stripped_ptg_vis[vis_dir == 0 and "north" or vis_dir == 4 and "east" or vis_dir == 8 and "south" or vis_dir == 12 and "west"])}
-        }
-      end
-
-      -- shift them all down
-      underground.visualization.north.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.east.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.south.layers[1].shift = util.by_pixel(0, xutil.downshift)
-      underground.visualization.west.layers[1].shift = util.by_pixel(0, xutil.downshift)
-
-        -- copy old visualisations on top of new ones
-      if old_visualization.north.layers then
-        -- layers exist, copy those
-        for s, sprite in pairs(old_visualization.north.layers) do
-          underground.visualization.north.layers[#underground.visualization.north.layers+1] = sprite
-        end
-        for s, sprite in pairs(old_visualization.east.layers) do
-          underground.visualization.east.layers[#underground.visualization.east.layers+1] = sprite
-        end
-        for s, sprite in pairs(old_visualization.south.layers) do
-          underground.visualization.south.layers[#underground.visualization.south.layers+1] = sprite
-        end
-        for s, sprite in pairs(old_visualization.west.layers) do
-          underground.visualization.west.layers[#underground.visualization.west.layers+1] = sprite
-        end
+    -- turn into layers, if it exists
+    underground.visualization = underground.visualization or xutil.base_visualisation
+    for direction, sprite in pairs(underground.visualization or {}) do
+      -- layers DNE, make into layers
+      if not sprite.layers then
+        underground.visualization[direction] = {layers = {[#directions + 1] = sprite}}
       else
-        -- layers do not exist, copy new ones
-        underground.visualization.north.layers[#underground.visualization.north.layers+1] = old_visualization.north
-        underground.visualization.east.layers[#underground.visualization.east.layers+1] = old_visualization.east
-        underground.visualization.south.layers[#underground.visualization.south.layers+1] = old_visualization.south
-        underground.visualization.west.layers[#underground.visualization.west.layers+1] = old_visualization.west
+        -- layers exist, shift over
+        for j, layer in pairs(table.deepcopy(sprite.layers)) do
+          underground.visualization[direction].layers[#directions + j] = layer
+        end
+      end
+    end
+    
+    for i, direction in pairs(directions) do
+      for j = 0, 3 do
+        -- increment new direction from offset vector and add to layers
+        underground.visualization[xutil.dirmap[j]].layers[i] = xutil.ptg_visualization(true)[xutil.dirmap[(direction / 4 + j) % 4]]
       end
     end
 
@@ -262,10 +241,10 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     xutil.adjust_recipes(u)
   end
 
-    underground.solved_by_tomwub = nil
-    underground.solved_by_npt = nil
-    underground.npt_compat = nil
-  end
+  underground.solved_by_tomwub = nil
+  underground.solved_by_npt = nil
+  underground.npt_compat = nil
+end
 
 for _, type in pairs{
   "pump",
