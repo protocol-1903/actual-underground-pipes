@@ -72,25 +72,6 @@ if mods["no-pipe-touching"] then
   }}
 end
 
--- if recipe exists
--- if not mods["bztin"] and data.raw.recipe["duct-underground"] then
---   local ingredients = data.raw.recipe["duct-underground"].ingredients
---   data.raw.recipe["duct-underground"].ingredients = {}
---   -- add ingredient if not the associated pipe
---   for _, ingredient in pairs(ingredients) do
---     if not data.raw.pipe[ingredient.name] then -- if not a pipe then add to ingredients
---       data.raw.recipe["duct-underground"].ingredients[#data.raw.recipe["duct-underground"].ingredients+1] = ingredient
---     end
---   end
--- elseif mods["bztin"] and data.raw.recipe["duct-underground"] then
---   -- modify counts
---   for _, ingredient in pairs(data.raw.recipe["duct-underground"].ingredients) do
---     if data.raw.pipe[ingredient.name] and ingredient.amount > 2 then
---       ingredient.amount = 2 -- if a pipe, set amount to 2
---     end
---   end
--- end
-
 -- solve the underground ducts
 for i, pipe in pairs(pipes) do
   local p = pipe
