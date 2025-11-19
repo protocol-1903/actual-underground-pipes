@@ -3,6 +3,7 @@ Version: 1.0.1
 Date: ????
   Changes:
     - Abstracted adjust_recipe, ptg_visualization, ptg_visualizations, base_visualization, and dirmap to xutil
+    - Generalized SE compat of ptg recipe only having pipes as ingredients so recipe takes 2 pipes to craft
   Bugfixes:
     - Fixed Flow Control underground pipes taking damage
 ---------------------------------------------------------------------------------------------------
