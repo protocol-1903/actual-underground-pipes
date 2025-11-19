@@ -41,6 +41,7 @@ for _, pipe in pairs(pipes) do
       selection_box = pipe.selection_box,
       collision_mask = underground_collision_mask or { layers = {} },
       flags = {"not-upgradable", "player-creation", "placeable-neutral"},
+      resistances = underground_total_resistances,
       window_bounding_box = pipe.window_bounding_box,
       flow_length_in_ticks = pipe.flow_length_in_ticks,
       icon_draw_specification = table.deepcopy(pipe.icon_draw_specification),
@@ -72,7 +73,4 @@ for _, pipe in pairs(pipes) do
   tomwub_pipe.pictures.low_temperature_flow = nil
   tomwub_pipe.pictures.middle_temperature_flow = nil
   tomwub_pipe.pictures.high_temperature_flow = nil
-
-  -- scale down the fluid icon
-  tomwub_pipe.icon_draw_specification.scale = 0.35
 end
