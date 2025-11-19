@@ -10,42 +10,6 @@ local pipes = {
   "duct-long",
 }
 
-local function reformat(spritesheet, ignore)
-  for s, sprite in pairs(spritesheet) do
-    if sprite.layers then
-      for i, sprit in pairs(sprite.layers) do
-        sprit.shift = util.by_pixel(0, downshift)
-        if not s:find("visualization") then
-          sprit.tint = {
-            settings.startup["fmf-pipe-opacity"].value,
-            settings.startup["fmf-pipe-opacity"].value,
-            settings.startup["fmf-pipe-opacity"].value,
-            settings.startup["fmf-pipe-opacity"].value
-          }
-        end
-        if sprit.filename:sub(-10) == "shadow.png" then
-          sprite.layers[i] = nil
-        end
-      end
-    else
-      sprite.shift = util.by_pixel(0, downshift)
-      if not s:find("visualization") then
-        sprite.tint = {
-          settings.startup["fmf-pipe-opacity"].value,
-          settings.startup["fmf-pipe-opacity"].value,
-          settings.startup["fmf-pipe-opacity"].value,
-          settings.startup["fmf-pipe-opacity"].value
-        }
-      end
-    end
-    if s:find("disabled_visualization") then
-      sprite.filename = "__the-one-mod-with-underground-bits__/graphics/underground-disabled-visualization.png"
-    elseif s:find("visualization") then
-      sprite.filename = "__the-one-mod-with-underground-bits__/graphics/underground-visualization.png"
-    end
-  end
-end
-
 -- solve the duct to ground
 local underground = data.raw["pipe-to-ground"]["duct-underground"]
 
@@ -155,6 +119,7 @@ for i, pipe in pairs(pipes) do
       collision_box = pipe.collision_box,
       selection_box = pipe.selection_box,
       collision_mask = underground_collision_mask or { layers = {} },
+      resistances = underground_total_resistances,
       flags = {"not-upgradable", "player-creation", "placeable-neutral"},
       window_bounding_box = pipe.window_bounding_box,
       flow_length_in_ticks = pipe.flow_length_in_ticks,
@@ -186,7 +151,7 @@ for i, pipe in pairs(pipes) do
     tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, downshift)
     tomwub_pipe.icon_draw_specification.scale = 0.35
   end
-  reformat(tomwub_pipe.pictures.picture)
+  xutil.reformat(tomwub_pipe.pictures.picture)
 
   tomwub_pipe.pictures.gas_flow = nil
   tomwub_pipe.pictures.low_temperature_flow = nil
@@ -195,5 +160,7 @@ for i, pipe in pairs(pipes) do
 
   -- update the selection box of the pipe
   tomwub_pipe.selection_box = {{tomwub_pipe.selection_box[1][1] * 0.8, tomwub_pipe.selection_box[1][2] * 0.8}, {tomwub_pipe.selection_box[2][1] * 0.8, tomwub_pipe.selection_box[2][2] * 0.8}}
-
 end
+
+-- since we arent crafting the underground bits anymore
+data.raw.recipe["duct-underground"].ingredients[1].amount = 16

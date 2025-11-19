@@ -6,6 +6,7 @@ Date: ????
     - Generalized SE compat of ptg recipe only having pipes as ingredients so recipe takes 2 pipes to craft
   Bugfixes:
     - Fixed Flow Control underground pipes taking damage
+    - Fixed FMF duct to grounds taking the normal 60 iron plates to craft
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2025-11-18
