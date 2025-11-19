@@ -222,19 +222,16 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     end
 
     -- update collision mask
-    if not underground.collision_mask then
-      underground.collision_mask = {
-        layers = {
-          is_lower_object = true,
-          water_tile = true,
-          floor = true,
-          transport_belt = true,
-          item = true,
-          car = true,
-          meltable = true
-        }
-      }
-    end
+    underground.collision_mask = underground.collision_mask or {}
+    underground.collision_mask.layers = underground.collision_mask.layers or {
+      is_lower_object = true,
+      water_tile = true,
+      floor = true,
+      transport_belt = true,
+      item = true,
+      car = true,
+      meltable = true
+    }
     underground.collision_mask.layers[tag] = true
 
     -- attempt to fix recipes
