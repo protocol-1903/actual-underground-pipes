@@ -179,23 +179,26 @@ data:extend{
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
   if not underground.solved_by_tomwub then
     local directions, tag = {}
+
+    if not mods["no-pipe-touching"] then
+      tag = "tomwub-underground"
+    elseif not underground.npt_compat then
+      tag = "tomwub-" .. "pipe" .. "-underground"
+    elseif underground.npt_compat.tag then
+      tag = "tomwub-" .. underground.npt_compat.mod .. "-" .. underground.npt_compat.tag .. "-underground"
+    elseif underground.npt_compat.override then
+      tag = "tomwub-" .. underground.npt_compat.override .. "-underground"
+    else
+      error("tag not found for ptg:" .. serpent.block(underground))
+    end
+
     for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
       if pipe_connection.connection_type == "underground" then
         -- make the underground a fake underground
         pipe_connection.connection_type = "normal"
         pipe_connection.max_underground_distance = nil
         -- set the filter to the psuedo underground pipe name
-        if not mods["no-pipe-touching"] then
-          pipe_connection.connection_category = "tomwub-underground"
-        elseif not underground.npt_compat then
-          pipe_connection.connection_category = "tomwub-" .. "pipe" .. "-underground"
-        elseif underground.npt_compat.tag then
-          pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.mod .. "-" .. underground.npt_compat.tag .. "-underground"
-        elseif underground.npt_compat.override then
-          pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
-        end
-        
-        tag = pipe_connection.connection_category
+        pipe_connection.connection_category = tag
         directions[#directions+1] = pipe_connection.direction
       end
     end
