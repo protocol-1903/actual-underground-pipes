@@ -39,49 +39,8 @@ for p, pipe in pairs(data.raw.pipe) do
         end
       end
 
-      -- create new visualizations for the pipe-to-ground
-      underground.visualization = {
-        north = {
-          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
-          priority = "extra-high",
-          x = 64,
-          width = 64,
-          height = 128,
-          scale = 0.5,
-          shift = util.by_pixel(0, 16),
-          flags = {"icon"}
-        },
-        south = {
-          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
-          priority = "extra-high",
-          x = 192,
-          width = 64,
-          height = 128,
-          scale = 0.5,
-          shift = util.by_pixel(0, 16),
-          flags = {"icon"}
-        },
-        west = {
-          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
-          priority = "extra-high",
-          x = 256,
-          width = 64,
-          height = 128,
-          scale = 0.5,
-          shift = util.by_pixel(0, 16),
-          flags = {"icon"}
-        },
-        east = {
-          filename = "__the-one-mod-with-underground-bits__/graphics/visualization.png",
-          priority = "extra-high",
-          x = 128,
-          width = 64,
-          height = 128,
-          scale = 0.5,
-          shift = util.by_pixel(0, 16),
-          flags = {"icon"}
-        }
-      }
+      -- assign new visualizations for the pipe-to-ground
+      underground.visualization = xutil.ptg_visualizations
 
       -- set heating enrergy of pipe-to-ground to that of the pipe
       underground.heating_energy = pipe.heating_energy
@@ -152,8 +111,8 @@ for p, pipe in pairs(data.raw.pipe) do
           type = "collision-layer",
           name = tag
         }}
-
       end
+
       tomwub_pipe = data.raw.pipe["tomwub-" .. p]
       for _, pipe_connection in pairs(tomwub_pipe.fluid_box.pipe_connections) do
         pipe_connection.connection_category = tag
@@ -165,9 +124,7 @@ for p, pipe in pairs(data.raw.pipe) do
       -- shift everything down
       tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, xutil.downshift)
       xutil.reformat(tomwub_pipe.pictures)
-      if tomwub_pipe.fluid_box.pipe_covers == nil then
-        tomwub_pipe.fluid_box.pipe_covers = table.deepcopy(pipecoverspictures())
-      end
+      tomwub_pipe.fluid_box.pipe_covers = tomwub_pipe.fluid_box.pipe_covers or table.deepcopy(pipecoverspictures())
       xutil.reformat(tomwub_pipe.fluid_box.pipe_covers)
 
       -- hide flow pictures
