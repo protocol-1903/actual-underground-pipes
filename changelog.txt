@@ -4,6 +4,7 @@ Date: ????
   Changes:
     - Simplified logic for finding tags
     - Mod will now usefully error if no tag is found
+    - Updated recycling recipe handling to properly handle recipes that just take pipes, therefore the recycling recipes just output pipes
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2025-11-18

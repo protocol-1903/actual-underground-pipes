@@ -160,6 +160,26 @@ xutil.adjust_recipes = function(u)
         end
       end
     end
+      
+    -- if recycling recipe exists
+    if data.raw.recipe[u .. "-recycling"] then
+      -- just pipes, set to 2
+      if #data.raw.recipe[u .. "-recycling"].results == 1 and data.raw.recipe[u .. "-recycling"].results[1].name:find("pipe") then
+        data.raw.recipe[u .. "-recycling"].results[1].amount = 1
+        data.raw.recipe[u .. "-recycling"].results[1].probability = 0.5
+        data.raw.recipe[u .. "-recycling"].results[1].amount_min = nil
+        data.raw.recipe[u .. "-recycling"].results[1].amount_max = nil
+      else -- not just pipes, get rid of them
+        local results = table.deepcopy(data.raw.recipe[u .. "-recycling"].results)
+        data.raw.recipe[u .. "-recycling"].results = {}
+        -- add result if not the associated pipe
+        for _, result in pairs(results) do
+          if not result.name:find("pipe") then
+            table.insert(data.raw.recipe[u .. "-recycling"].results, result)
+          end
+        end
+      end
+    end
   elseif mods["bztin"] and data.raw.recipe[u] then
     -- modify counts
     for _, ingredient in pairs(data.raw.recipe[u].ingredients) do
@@ -175,19 +195,9 @@ xutil.adjust_recipes = function(u)
         if data.raw.pipe[result.name] and result.amount > 2 then
           result.amount = 1
           result.probability = 0.5
+          result.amount_min = nil
+          result.amount_max = nil
         end
-      end
-    end
-  end
-      
-  -- if recycling recipe exists
-  if data.raw.recipe[u .. "-recycling"] then
-    local results = table.deepcopy(data.raw.recipe[u .. "-recycling"].results)
-    data.raw.recipe[u .. "-recycling"].results = {}
-    -- add result if not the associated pipe
-    for _, result in pairs(results) do
-      if not result.name:find("pipe") then
-        table.insert(data.raw.recipe[u .. "-recycling"].results, result)
       end
     end
   end
