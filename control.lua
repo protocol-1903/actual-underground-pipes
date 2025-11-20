@@ -297,21 +297,10 @@ script.on_event("tomwub-swap-layer", function(event)
         name = "tomwub-" .. item,
         quality = quality
       }
-    else -- non-ghost, insert from inventory
-      -- get amount added to inventory
-      local removed = player.get_main_inventory().remove {
-        name = item,
-        count = count,
-        quality = quality
-      }
-
-      -- if removed, then it was taken from inventory, else it was from another container
-      removed = removed > 0 and removed or count
-
-      -- put into cursor
+    else -- non-ghost, convert
       player.cursor_stack.set_stack {
         name = "tomwub-" .. item,
-        count = removed,
+        count = count,
         quality = quality
       }
       -- find open slot for hand to go

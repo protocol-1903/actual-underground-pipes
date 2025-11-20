@@ -1,11 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.3
-Date: ????
+Date: 2025-11-20
   Changes:
     - Simplified logic for finding tags
     - Mod will now usefully error if no tag is found
     - Changed to using quality's builtin recycling recipe generator instead of a custom reimplementation
     - Verbose error logs for when too many pipe layers are specified when NPT is installed
+  Bugfixes:
+    - Fixed swapping to underground layer consuming a stack of items from the inventory
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2025-11-18
