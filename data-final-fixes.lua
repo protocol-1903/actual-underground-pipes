@@ -106,6 +106,22 @@ for p, pipe in pairs(data.raw.pipe) do
         }
       }
 
+      -- since we can only check while in the loop
+      if mods["no-pipe-touching"] and table_size(data.raw["collision-layer"]) == 55 then
+        if mods["color-coded-pipes"] then
+          error("The mod combination specified is nonviable due to engine constraints. Please remove one of the following:\n- Actual Underground Pipes\n- No Pipe Touching\n- Color Coded Pipes")
+        else
+          local ptg_list = ""
+          for prototype in pairs(data.raw["pipe-to-ground"]) do
+            ptg_list = ptg_list .. "- " .. prototype .. "\n"
+          end
+          error("There are too many pipes. Please remove one of the following mods:\n" .. (
+            (mods["RGBPipes"] and "- RGB Pipes\n" or "") ..
+            (mods["pipe-tiers"] and "- Pipe Tiers\n" or "")
+          ) .. "Or remove a mod that adds some of the following:\n" .. ptg_list)
+        end
+      end
+
       if mods["no-pipe-touching"] then
         data.extend{{
           type = "collision-layer",
