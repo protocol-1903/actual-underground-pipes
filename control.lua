@@ -250,7 +250,7 @@ script.on_event("tomwub-swap-layer", function(event)
   if not player then return end
 
   local item = player.cursor_ghost and player.cursor_ghost.name.name or
-    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
+    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or ""
   local quality = player.cursor_ghost and player.cursor_ghost.quality or 
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.quality or nil
   local count = player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.count or 0
