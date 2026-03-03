@@ -2,9 +2,8 @@
 
 Got a cool base that uses my mod? Let me know and I can pics up on the mod portal!
 
-*Advanced Fluid Handling, but... freehand*
-
-*\- Ashierz*
+    Advanced Fluid Handling, but... freehand
+    - Ashierz
 
 Have you ever felt that piping things under buildings was too easy? That dragging a pipe to ground along was just... not fun?
 
@@ -17,19 +16,21 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 
 # TODO
 - toggleable "alt mode" where a visualization is placed over underground pipes so they can be seen easier
-- update logic to only mine the category that is in the player's hand
+- migrations
 
 # Known Issues
-- Pipe to Grounds have a phantom pipe cover when not connected. It's not fixable without removing the pipe covers of pipe to grounds entirely, and it only shows up when they aren't connected, so I don't see it as a major issue.
+- Pipe to Grounds have a phantom pipe cover when not connected. It's not fixable without removing the pipe covers of pipe to grounds entirely, and it only shows up when they aren't connected (or connected to a ghost), so I don't see it as a major issue.
 - The pipe to ground in your cursor is flipped after placement. This is not fixable without some major downsides so I'm not considering it for now.
 - There may be crashes or locale issues with certain mods. If you find them, please let me know.
 
 # Compatibility
+- [Parallel Piping](https://mods.factorio.com/mod/parallel-piping): full compatibility. In fact, they work rather well together! I can highly recommend it!
 - [No Pipe Touching](https://mods.factorio.com/mod/no-pipe-touching): NPT has full compatibility. Additionally, each type of pipe (as defined by NPT) can be weaved together in different layers of undergrounds via a mod setting. This is a heavy mechanic, though, and is known to crash the game in certain mod configurations. It will be automatically turned off in certain configurations known to crash the game.
 - [Fluid Must Flow](https://mods.factorio.com/mod/FluidMustFlow): Fluid Must Flow is fully compatible! Since v0.1.6, I have added full compatibility. There are some rough edges, but those will be fixed over time as I get player feedback on the changes.
 - [Elevated Pipes](https://mods.factorio.com/mod/elevated-pipes): Psuedo compatibility in that Elevated Pipes function as normal, and Underground Pipes do not interact with them. Saves using existing Elevated Pipes will not be modified.
 - [Advanced Fluid Handling](https://mods.factorio.com/mod/underground-pipe-pack): Unfortunately, AUP does not have native compatibility with AFH due to engine limitations. There's nothing that can be done in AUP to make it work, it would take some major rework of AFH scripting to make the two mods compatible. I don't see this as much of an issue, since both mods fill relatively similar roles. If it's brought up enough, something can probably be figured out.
 - [Pipe Plus](https://mods.factorio.com/mod/pipe_plus): Same issues as AFH.
-- Supports all other mods, hopefully. If something doesn't work, let me know!
+
+If you wish to add compatibility with a mod, talk to me on github or discord so we can sort it out.
 
 If you have a mod idea, let me know and I can look into it.
