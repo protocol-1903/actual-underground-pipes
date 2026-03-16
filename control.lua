@@ -38,34 +38,23 @@ script.on_event(defines.events.on_player_controller_changed, function (event)
   storage.tomwub[player.index].count = -3 - count
 end)
 
--- when pipetting an underground pipe, put that one in the hand instead
-script.on_event(defines.events.on_player_pipette, function (event)
+---@param event EventData.on_selected_entity_changed
+local function on_selected(event)
   local player = game.get_player(event.player_index)
-
-  -- only run if selected entity (duh)
-  if not player.selected then return end
-
-  local prototype = player.selected and (player.selected.name == "entity-ghost" and player.selected.ghost_prototype or player.selected.prototype)
-  local name = prototype.items_to_place_this and prototype.items_to_place_this[1] and prototype.items_to_place_this[1].name
-  local quality = player.selected and player.selected.quality
-
-  -- end if not one of ours
-  if prototype.name:sub(1,7) ~= "tomwub-" or not prototypes.item["tomwub-" .. name] then return end
-
-  if not player.cursor_ghost then
-    -- should fill normally with stack change script
-    storage.tomwub[player.index] = {
-      item = "tomwub-" .. name,
-      count = -1,
-      quality = quality
-    }
+  local entity = player.selected
+  if not entity then return end
+  local prototype = entity.name == "entity-ghost" and entity.ghost_prototype or entity.prototype
+  local item = player.cursor_ghost and player.cursor_ghost.name.name or
+    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
+  if (not item or item:sub(1,7) ~= "tomwub-") and prototype.name:sub(1,7) == "tomwub-" then
+    player.selected = nil
+  elseif item and item:sub(1,7) == "tomwub-" and prototype.name:sub(1,7) ~= "tomwub-" then
+    player.selected = nil
   end
-  player.clear_cursor()
-  player.cursor_ghost = {
-    name = "tomwub-" .. name,
-    quality = quality
-  }
-end)
+end
+
+-- only allow selecting an underground pipe if you have one in hand
+script.on_event(defines.events.on_selected_entity_changed, on_selected)
 
 -- if ghost underground selected, check if it needs refilling
 ---@param event EventData.on_player_cursor_stack_changed
@@ -88,7 +77,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
   local old_quality = storage.tomwub[event.player_index].quality or ""
 
   -- if just swapped using custom key (old_count == -2), will skip to end
-  -- was previously holding item but placed last one, signaled by on_built_entity OR just pipetted an underground pipe (creating ghost item)
+  -- was previously holding item but placed last one, signaled by on_built_entity
   if old_count == -1 and player.cursor_ghost then
 
     -- get count and remove from inventory
@@ -125,6 +114,8 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
       count = old_count,
       quality = old_quality
     }
+
+    on_selected(event)
 
     -- something must be obstructing the cursor, put it back
     if inserted ~= old_count then
@@ -314,6 +305,9 @@ script.on_event("tomwub-swap-layer", function(event)
       end
     end
   end
+
+  -- update selected entity
+  on_selected(event)
 
   -- set the previous item and count
   storage.tomwub[event.player_index] = {

@@ -139,9 +139,6 @@ for i, pipe in pairs(pipes) do
   tomwub_pipe.pictures.low_temperature_flow = nil
   tomwub_pipe.pictures.middle_temperature_flow = nil
   tomwub_pipe.pictures.high_temperature_flow = nil
-
-  -- update the selection box of the pipe
-  tomwub_pipe.selection_box = {{tomwub_pipe.selection_box[1][1] * 0.8, tomwub_pipe.selection_box[1][2] * 0.8}, {tomwub_pipe.selection_box[2][1] * 0.8, tomwub_pipe.selection_box[2][2] * 0.8}}
 end
 
 -- since we arent crafting the underground bits anymore

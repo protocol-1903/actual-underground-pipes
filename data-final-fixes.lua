@@ -40,10 +40,6 @@ for p, pipe in pairs(data.raw.pipe) do
         end
       end
 
-      log(u)
-      log(connection_category)
-      log(layer)
-
       -- assign new visualizations for the pipe-to-ground
       underground.visualization = xutil.ptg_visualizations
 
@@ -168,9 +164,6 @@ for p, pipe in pairs(data.raw.pipe) do
         }
       end
 
-      -- update the selection box of the pipe
-      tomwub_pipe.selection_box = {{-0.4, -0.4 + util.by_pixel(0, xutil.downshift)[2]}, {0.4, 0.4 + util.by_pixel(0, xutil.downshift)[2]}}
-
       -- attempt to fix recipes
       xutil.adjust_recipes(u)
     end
@@ -243,7 +236,7 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
         end
       end
     end
-    
+
     for i, direction in pairs(directions) do
       for j = 0, 3 do
         -- increment new direction from offset vector and add to layers

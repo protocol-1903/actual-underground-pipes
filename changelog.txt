@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.18
+Date: ????
+  Changes:
+    - Underground pipes can only be selected when holding an underground pipe in the cursor. You will also be unable to select non-underground entities with an underground pipe in the cursor. This should make intaractions much easier. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/28
+---------------------------------------------------------------------------------------------------
 Version: 1.0.17
 Date: 2026-02-15
   Changes:
