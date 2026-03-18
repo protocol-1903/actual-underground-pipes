@@ -2,7 +2,7 @@ _G.xutil = xutil or {}
 xutil.downshift = 10
 
 xutil.reformat = function(spritesheet)
-  for s, sprite in pairs(spritesheet) do
+  for s, sprite in pairs(spritesheet or {}) do
     if type(sprite) == "table" then
       if sprite.layers then
         for _, sprit in pairs(sprite.layers) do

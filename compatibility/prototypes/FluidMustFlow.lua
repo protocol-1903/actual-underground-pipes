@@ -12,8 +12,9 @@ for i, t in pairs{
   "duct-small",
   "duct-long"
 } do
-  if data.raw["storage-tank"][t] then
-    local u_tank = xutil.make_tomwub_variant(data.raw["storage-tank"][t], mask, layer, connection_category)
+  local tank = data.raw["storage-tank"][t]
+  if tank then
+    local u_tank = xutil.make_tomwub_variant(tank, mask, layer, connection_category)
     u_tank.placeable_by = { {item = "tomwub-pipe", count = 1}, {item = "pipe", count = 1}, {item = "tomwub-" .. t, count = 1}, {item = t, count = 1} }
     xutil.reformat(u_tank.pictures.picture)
     if settings.startup["fmf-enable-duct-auto-join"].value and i > 3 then
