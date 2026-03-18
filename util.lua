@@ -140,6 +140,7 @@ xutil.dirmap = {
 local recycling = mods["quality"] and require("__quality__.prototypes.recycling") or nil
 
 xutil.adjust_recipes = function(u)
+  log("adjusting recipes for: " .. u)
   -- if recipe exists
   if not mods["bztin"] then
     -- fix normal recipes
@@ -172,7 +173,7 @@ xutil.adjust_recipes = function(u)
       end
     end
   end
-  
+
   -- if recycling recipe exists
   if data.raw.recipe[u .. "-recycling"] and recycling then
     recycling.generate_recycling_recipe(data.raw.recipe[u])
@@ -180,6 +181,7 @@ xutil.adjust_recipes = function(u)
 end
 
 xutil.adjust_ptg = function(prototype, pipe)
+  log("adjusting pipe to ground: " .. prototype.name)
   prototype.solved_by_tomwub = true
   local underground_collision_mask, layer, connection_category
   for _, pipe_connection in pairs(prototype.fluid_box.pipe_connections) do
@@ -227,11 +229,14 @@ xutil.default_layer = settings.startup["npt-tomwub-weaving"].value and "tomwub-p
 xutil.default_category = not mods["no-pipe-touching"] and "tomwub-underground" or "tomwub-pipe-underground"
 
 xutil.make_tomwub_variant = function(pipe, mask, layer, category)
+  log("making underground variant of: " .. pipe.name)
   -- create new item, entity, and collision layer
   local item = table.deepcopy(data.raw.item[pipe.name])
-  item.name = "tomwub-" .. pipe.name
-  item.place_result = "tomwub-" .. pipe.name
-  item.flags = {"only-in-cursor"}
+  if item then
+    item.name = "tomwub-" .. pipe.name
+    item.place_result = "tomwub-" .. pipe.name
+    item.flags = {"only-in-cursor"}
+  end
 
   local u_pipe = table.deepcopy(pipe)
   u_pipe.name = "tomwub-" .. pipe.name
@@ -279,9 +284,6 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.icon_draw_specification = u_pipe.icon_draw_specification or {}
   u_pipe.icon_draw_specification.shift = util.by_pixel(0, xutil.downshift)
   u_pipe.icon_draw_specification.scale = 0.35
-  xutil.reformat(u_pipe.pictures)
-  u_pipe.fluid_box.pipe_covers = u_pipe.fluid_box.pipe_covers or table.deepcopy(pipecoverspictures())
-  xutil.reformat(u_pipe.fluid_box.pipe_covers)
 
   -- hide flow pictures
   u_pipe.pictures.gas_flow = nil

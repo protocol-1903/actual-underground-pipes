@@ -1,144 +1,28 @@
 if not mods["FluidMustFlow"] then return end
 
-local downshift = require("__the-one-mod-with-underground-bits__.util").downshift
-local pipes = {
+local underground = data.raw["pipe-to-ground"]["duct-underground"]
+local mask, layer, connection_category = xutil.adjust_ptg(underground, "duct")
+underground.heating_energy = data.raw["storage-tank"].duct.heating_energy
+
+for i, t in pairs{
   "duct-curve",
   "duct-t-junction",
   "duct-cross",
   "duct",
   "duct-small",
-  "duct-long",
-}
-
--- solve the duct to ground
-local underground = data.raw["pipe-to-ground"]["duct-underground"]
-
-underground.solved_by_tomwub = true
-local underground_collision_mask, layer, connection_category
--- the underground name matches with the pipe name
--- also only runs this chunk of code once per supported underground
-for _, pipe_connection in pairs(underground.fluid_box.pipe_connections) do
-  if pipe_connection.connection_type == "underground" then
-    -- make the underground a fake underground
-    pipe_connection.connection_type = "normal"
-    pipe_connection.max_underground_distance = nil
-    -- set the filter to the psuedo underground pipe name
-    if not mods["no-pipe-touching"] then
-      pipe_connection.connection_category = "tomwub-underground"
-    elseif not underground.npt_compat then
-      pipe_connection.connection_category = "tomwub-duct-underground"
-    elseif underground.npt_compat.tag then
-      pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.mod .. "-" .. underground.npt_compat.tag .. "-underground"
-    elseif underground.npt_compat.override then
-      pipe_connection.connection_category = "tomwub-" .. underground.npt_compat.override .. "-underground"
+  "duct-long"
+} do
+  if data.raw["storage-tank"][t] then
+    local u_tank = xutil.make_tomwub_variant(data.raw["storage-tank"][t], mask, layer, connection_category)
+    u_tank.placeable_by = { {item = "tomwub-pipe", count = 1}, {item = "pipe", count = 1}, {item = "tomwub-" .. t, count = 1}, {item = t, count = 1} }
+    xutil.reformat(u_tank.pictures.picture)
+    if settings.startup["fmf-enable-duct-auto-join"].value and i > 3 then
+      u_tank.placeable_by = {
+        {item = "tomwub-duct-small", count = t == "duct" and 2 or t == "duct-small" and 1 or 4},
+        {item = "duct-small", count = t == "duct" and 2 or t == "duct-small" and 1 or 4}
+      }
     end
-    -- save collision mask for later
-    underground_collision_mask = pipe_connection.underground_collision_mask or {layers = {}}
-    connection_category = pipe_connection.connection_category
-    layer = settings.startup["npt-tomwub-weaving"].value and pipe_connection.connection_category or "tomwub-underground"
   end
-end
-
--- they can only be placed inside the map
-if data.raw.tile["out-of-map"] then
-  underground_collision_mask.layers["out_of_map"] = true
-end
-
-
--- set heating enrergy of pipe-to-ground to that of the pipe
-underground.heating_energy = data.raw["storage-tank"].duct.heating_energy
-
--- update collision mask
-if not underground.collision_mask then
-  underground.collision_mask = {
-    layers = {
-      is_lower_object = true,
-      water_tile = true,
-      floor = true,
-      transport_belt = true,
-      item = true,
-      car = true,
-      meltable = true
-    }
-  }
-end
-
--- set the collision mask to the connection_category collected earlier
-underground.collision_mask.layers[layer] = true
-
-if settings.startup["npt-tomwub-weaving"].value then
-  data.extend{{
-    type = "collision-layer",
-    name = layer
-  }}
-end
-
--- solve the underground ducts
-for i, pipe in pairs(pipes) do
-  local p = pipe
-  local pipe = data.raw["storage-tank"][p]
-  -- create new item, entity, and collision layer
-  if data.raw.item[p] then
-    data:extend{{
-      type = "item",
-      name = "tomwub-" .. p,
-      icon = pipe.icon or data.raw.pipe.pipe.icon,
-      icon_size = pipe.icon_size or data.raw.pipe.pipe.icon_size,
-      place_result = "tomwub-" .. p,
-      flags = {"only-in-cursor"},
-      stack_size = data.raw.item[p].stack_size
-    }}
-  end
-  data.extend{
-    {
-      type = "storage-tank",
-      name = "tomwub-" .. p,
-      icon = pipe.icon or data.raw.pipe.pipe.icon,
-      icon_size = pipe.icon_size or data.raw.pipe.pipe.icon_size,
-      localised_name = {"entity-name.tomwub-underground", pipe.localised_name or {"entity-name." .. pipe.name}},
-      fluid_box = table.deepcopy(pipe.fluid_box),
-      pictures = table.deepcopy(pipe.pictures),
-      collision_box = pipe.collision_box,
-      selection_box = pipe.selection_box,
-      collision_mask = underground_collision_mask or { layers = {} },
-      resistances = underground_total_resistances,
-      flags = {"not-upgradable", "player-creation", "placeable-neutral"},
-      window_bounding_box = pipe.window_bounding_box,
-      flow_length_in_ticks = pipe.flow_length_in_ticks,
-      icon_draw_specification = table.deepcopy(pipe.icon_draw_specification),
-      minable = pipe.minable,
-      selection_priority = 255,
-      placeable_by = { {item = "tomwub-" .. p, count = 1}, {item = p, count = 1} },
-      is_military_target = false
-    }
-  }
-  
-  local tomwub_pipe = data.raw["storage-tank"]["tomwub-" .. p]
-  if settings.startup["fmf-enable-duct-auto-join"].value and i > 3 then
-    tomwub_pipe.placeable_by = {
-      {item = "tomwub-duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4},
-      {item = "duct-small", count = p == "duct" and 2 or p == "duct-small" and 1 or 4}
-    }
-  end
-
-  for _, pipe_connection in pairs(tomwub_pipe.fluid_box.pipe_connections) do
-    pipe_connection.connection_category = connection_category
-  end
-
-  -- set the collision mask to the connection_category collected earlier
-  tomwub_pipe.collision_mask.layers[layer] = true
-
-  -- shift everything down
-  if tomwub_pipe.icon_draw_specification then
-    tomwub_pipe.icon_draw_specification.shift = util.by_pixel(0, downshift)
-    tomwub_pipe.icon_draw_specification.scale = 0.35
-  end
-  xutil.reformat(tomwub_pipe.pictures.picture)
-
-  tomwub_pipe.pictures.gas_flow = nil
-  tomwub_pipe.pictures.low_temperature_flow = nil
-  tomwub_pipe.pictures.middle_temperature_flow = nil
-  tomwub_pipe.pictures.high_temperature_flow = nil
 end
 
 -- since we arent crafting the underground bits anymore

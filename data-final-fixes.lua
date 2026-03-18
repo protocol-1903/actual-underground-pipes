@@ -16,7 +16,10 @@ for p, pipe in pairs(data.raw.pipe) do
     if u:sub(1,-11) == p and not underground.ignore_by_tomwub then
       local mask, layer, connection_category = xutil.adjust_ptg(underground, p)
       underground.heating_energy = pipe.heating_energy
-      xutil.make_tomwub_variant(pipe, mask, layer, connection_category)
+      local u_pipe = xutil.make_tomwub_variant(pipe, mask, layer, connection_category)
+      xutil.reformat(u_pipe.pictures)
+      u_pipe.fluid_box.pipe_covers = u_pipe.fluid_box.pipe_covers or table.deepcopy(pipecoverspictures())
+      xutil.reformat(u_pipe.fluid_box.pipe_covers)
       xutil.adjust_recipes(u)
 
       -- save the tag for later use with assembling machines
