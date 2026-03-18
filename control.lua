@@ -5,8 +5,8 @@ end)
 
 script.on_configuration_changed(function (event)
   storage.tomwub = storage.tomwub or {}
-  if script.active_mods["no-pipe-touching"] and not (event.mod_changes["no-pipe-touching"] or {}).old_version and storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value or
-    storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value and event.mod_startup_settings_changed then
+  if script.active_mods["no-pipe-touching"] and (not (event.mod_changes["no-pipe-touching"] or {}).old_version and storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value or
+    storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value and event.mod_startup_settings_changed) then
     game.print("Underground pipe layers can no longer be stacked by default. If you wish to enable this feature, please enable the mod setting: Enable underground pipe weaving")
   end
   storage.weaving = settings.startup["npt-tomwub-weaving"].value
