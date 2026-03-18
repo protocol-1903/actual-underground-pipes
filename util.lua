@@ -223,7 +223,10 @@ xutil.adjust_ptg = function(prototype, pipe)
   return underground_collision_mask, layer, connection_category
 end
 
-xutil.make_tomwub_variant = function(pipe, mask, layer, connection_category)
+xutil.default_layer = settings.startup["npt-tomwub-weaving"].value and "tomwub-pipe-underground" or "tomwub-underground"
+xutil.default_category = not mods["no-pipe-touching"] and "tomwub-underground" or "tomwub-pipe-underground"
+
+xutil.make_tomwub_variant = function(pipe, mask, layer, category)
   -- create new item, entity, and collision layer
   local item = table.deepcopy(data.raw.item[pipe.name])
   item.name = "tomwub-" .. pipe.name
@@ -258,7 +261,7 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, connection_category)
     ) .. "\nOr disable the mod setting: Enable underground pipe weaving.\n\nOr remove a mod that adds some of the following:\n" .. ptg_list)
   end
 
-  if settings.startup["npt-tomwub-weaving"].value then
+  if layer and settings.startup["npt-tomwub-weaving"].value then
     data.extend{{
       type = "collision-layer",
       name = layer
@@ -266,14 +269,16 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, connection_category)
   end
 
   for _, pipe_connection in pairs(u_pipe.fluid_box.pipe_connections) do
-    pipe_connection.connection_category = connection_category
+    pipe_connection.connection_category = category or xutil.default_category
   end
 
   -- set the collision mask to the connection_category collected earlier
-  u_pipe.collision_mask.layers[layer] = true
+  u_pipe.collision_mask.layers[layer or xutil.default_layer] = true
 
   -- shift everything down
+  u_pipe.icon_draw_specification = u_pipe.icon_draw_specification or {}
   u_pipe.icon_draw_specification.shift = util.by_pixel(0, xutil.downshift)
+  u_pipe.icon_draw_specification.scale = 0.35
   xutil.reformat(u_pipe.pictures)
   u_pipe.fluid_box.pipe_covers = u_pipe.fluid_box.pipe_covers or table.deepcopy(pipecoverspictures())
   xutil.reformat(u_pipe.fluid_box.pipe_covers)
@@ -283,9 +288,6 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, connection_category)
   u_pipe.pictures.low_temperature_flow = nil
   u_pipe.pictures.middle_temperature_flow = nil
   u_pipe.pictures.high_temperature_flow = nil
-
-  -- scale down the fluid icon
-  u_pipe.icon_draw_specification.scale = 0.35
 
   -- add placement visualization
   if settings.startup["pipe-opacity"].value == 0 then
@@ -298,6 +300,7 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, connection_category)
       distance = 0.65
     }
   end
+  return u_pipe
 end
 
 return xutil
