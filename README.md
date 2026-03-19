@@ -33,4 +33,5 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 
 If you wish to add compatibility with a mod, talk to me on github or discord so we can sort it out.
 
+My mods are made 100% by humans, with no computer generated code or graphics.
 If you have a mod idea, let me know and I can look into it.
