@@ -1,4 +1,4 @@
-local xutil = require "util"
+require "util"
 
 local tags = {}
 
@@ -14,13 +14,13 @@ end
 for p, pipe in pairs(data.raw.pipe) do
   for u, underground in pairs(data.raw["pipe-to-ground"]) do
     if u:sub(1,-11) == p and not underground.ignore_by_tomwub then
-      local mask, layer, connection_category = xutil.adjust_ptg(underground, p)
+      local mask, layer, connection_category = tomwub.adjust_ptg(underground, p)
       underground.heating_energy = pipe.heating_energy
-      local u_pipe = xutil.make_tomwub_variant(pipe, mask, layer, connection_category)
-      xutil.reformat(u_pipe.pictures)
+      local u_pipe = tomwub.make_tomwub_variant(pipe, mask, layer, connection_category)
+      tomwub.reformat(u_pipe.pictures)
       u_pipe.fluid_box.pipe_covers = u_pipe.fluid_box.pipe_covers or table.deepcopy(pipecoverspictures())
-      xutil.reformat(u_pipe.fluid_box.pipe_covers)
-      xutil.adjust_recipes(u)
+      tomwub.reformat(u_pipe.fluid_box.pipe_covers)
+      tomwub.adjust_recipes(u)
 
       -- save the tag for later use with assembling machines
       tags[#tags+1] = connection_category
@@ -82,7 +82,7 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     end
 
     -- turn into layers, if it exists
-    underground.visualization = underground.visualization or xutil.base_visualisation
+    underground.visualization = underground.visualization or tomwub.base_visualisation
     for direction, sprite in pairs(underground.visualization or {}) do
       -- layers DNE, make into layers
       if not sprite.layers then
@@ -98,7 +98,7 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     for i, direction in pairs(directions) do
       for j = 0, 3 do
         -- increment new direction from offset vector and add to layers
-        underground.visualization[xutil.dirmap[j]].layers[i] = xutil.ptg_visualization(true)[xutil.dirmap[(direction / 4 + j) % 4]]
+        underground.visualization[tomwub.dirmap[j]].layers[i] = tomwub.ptg_visualization(true)[tomwub.dirmap[(direction / 4 + j) % 4]]
       end
     end
 
@@ -116,7 +116,7 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     underground.collision_mask.layers[settings.startup["npt-tomwub-weaving"].value and connection_category or "tomwub-underground"] = true
 
     -- attempt to fix recipes
-    xutil.adjust_recipes(u)
+    tomwub.adjust_recipes(u)
   elseif underground.ignore_by_tomwub then
     log("ignoring prototype: " .. u)
     underground.ignore_by_tomwub = nil

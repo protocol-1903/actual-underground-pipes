@@ -1,12 +1,12 @@
-_G.xutil = xutil or {}
-xutil.downshift = 10
+_G.tomwub = tomwub or {}
+tomwub.downshift = 10
 
-xutil.reformat = function(spritesheet)
+tomwub.reformat = function(spritesheet)
   for s, sprite in pairs(spritesheet or {}) do
     if type(sprite) == "table" then
       if sprite.layers then
         for _, sprit in pairs(sprite.layers) do
-          sprit.shift = util.by_pixel(0, xutil.downshift)
+          sprit.shift = util.by_pixel(0, tomwub.downshift)
           if not s:find("visualization") then
             sprit.tint = {
               settings.startup["pipe-opacity"].value,
@@ -21,10 +21,10 @@ xutil.reformat = function(spritesheet)
         end
       elseif sprite.north then
         for _, direction in pairs{"north", "east", "south", "west"} do
-          xutil.reformat(sprite[direction])
+          tomwub.reformat(sprite[direction])
         end
       else
-        sprite.shift = util.by_pixel(0, xutil.downshift)
+        sprite.shift = util.by_pixel(0, tomwub.downshift)
         if not s:find("visualization") then
           sprite.tint = {
             settings.startup["pipe-opacity"].value,
@@ -43,7 +43,7 @@ xutil.reformat = function(spritesheet)
   end
 end
 
-xutil.ptg_visualization = function(underground)
+tomwub.ptg_visualization = function(underground)
   return {
     north = {
       filename = underground and "__the-one-mod-with-underground-bits__/graphics/visualization.png" or "__base__/graphics/entity/pipe-to-ground/visualization.png",
@@ -52,7 +52,7 @@ xutil.ptg_visualization = function(underground)
       width = 64,
       height = 64,
       scale = 0.5,
-      shift = underground and util.by_pixel(0, xutil.downshift) or nil,
+      shift = underground and util.by_pixel(0, tomwub.downshift) or nil,
       flags = {"icon"}
     },
     south = {
@@ -62,7 +62,7 @@ xutil.ptg_visualization = function(underground)
       width = 64,
       height = 64,
       scale = 0.5,
-      shift = underground and util.by_pixel(0, xutil.downshift) or nil,
+      shift = underground and util.by_pixel(0, tomwub.downshift) or nil,
       flags = {"icon"}
     },
     west = {
@@ -72,7 +72,7 @@ xutil.ptg_visualization = function(underground)
       width = 64,
       height = 64,
       scale = 0.5,
-      shift = underground and util.by_pixel(0, xutil.downshift) or nil,
+      shift = underground and util.by_pixel(0, tomwub.downshift) or nil,
       flags = {"icon"}
     },
     east = {
@@ -82,55 +82,55 @@ xutil.ptg_visualization = function(underground)
       width = 64,
       height = 64,
       scale = 0.5,
-      shift = underground and util.by_pixel(0, xutil.downshift) or nil,
+      shift = underground and util.by_pixel(0, tomwub.downshift) or nil,
       flags = {"icon"}
     }
   }
 end
 
-xutil.ptg_visualizations = {
+tomwub.ptg_visualizations = {
   north = {
     layers = {
-      xutil.ptg_visualization(true).south,
-      xutil.ptg_visualization().north,
+      tomwub.ptg_visualization(true).south,
+      tomwub.ptg_visualization().north,
     }
   },
   east = {
     layers = {
-      xutil.ptg_visualization(true).west,
-      xutil.ptg_visualization().east,
+      tomwub.ptg_visualization(true).west,
+      tomwub.ptg_visualization().east,
     }
   },
   south = {
     layers = {
-      xutil.ptg_visualization(true).north,
-      xutil.ptg_visualization().south,
+      tomwub.ptg_visualization(true).north,
+      tomwub.ptg_visualization().south,
     }
   },
   west = {
     layers = {
-      xutil.ptg_visualization(true).east,
-      xutil.ptg_visualization().west,
+      tomwub.ptg_visualization(true).east,
+      tomwub.ptg_visualization().west,
     }
   },
 }
 
-xutil.base_visualisation = {
+tomwub.base_visualisation = {
   north = {layers = {
-    xutil.ptg_visualization().north
+    tomwub.ptg_visualization().north
   }},
   east = {layers = {
-    xutil.ptg_visualization().east
+    tomwub.ptg_visualization().east
   }},
   south = {layers = {
-    xutil.ptg_visualization().south
+    tomwub.ptg_visualization().south
   }},
   west = {layers = {
-    xutil.ptg_visualization().west
+    tomwub.ptg_visualization().west
   }},
 }
 
-xutil.dirmap = {
+tomwub.dirmap = {
   [0] = "north",
   "east",
   "south",
@@ -139,7 +139,7 @@ xutil.dirmap = {
 
 local recycling = mods["quality"] and require("__quality__.prototypes.recycling") or nil
 
-xutil.adjust_recipes = function(u)
+tomwub.adjust_recipes = function(u)
   log("adjusting recipes for: " .. u)
   -- if recipe exists
   if not mods["bztin"] then
@@ -180,7 +180,7 @@ xutil.adjust_recipes = function(u)
   end
 end
 
-xutil.adjust_ptg = function(prototype, pipe)
+tomwub.adjust_ptg = function(prototype, pipe)
   log("adjusting pipe to ground: " .. prototype.name)
   prototype.solved_by_tomwub = true
   local underground_collision_mask, layer, connection_category
@@ -206,7 +206,7 @@ xutil.adjust_ptg = function(prototype, pipe)
     end
   end
 
-  prototype.visualization = xutil.ptg_visualizations
+  prototype.visualization = tomwub.ptg_visualizations
   prototype.collision_mask = prototype.collision_mask or {
     layers = {
       is_lower_object = true,
@@ -225,10 +225,10 @@ xutil.adjust_ptg = function(prototype, pipe)
   return underground_collision_mask, layer, connection_category
 end
 
-xutil.default_layer = settings.startup["npt-tomwub-weaving"].value and "tomwub-pipe-underground" or "tomwub-underground"
-xutil.default_category = not mods["no-pipe-touching"] and "tomwub-underground" or "tomwub-pipe-underground"
+tomwub.default_layer = settings.startup["npt-tomwub-weaving"].value and "tomwub-pipe-underground" or "tomwub-underground"
+tomwub.default_category = not mods["no-pipe-touching"] and "tomwub-underground" or "tomwub-pipe-underground"
 
-xutil.make_tomwub_variant = function(pipe, mask, layer, category)
+tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   log("making underground variant of: " .. pipe.name)
   -- create new item, entity, and collision layer
   local item = table.deepcopy(data.raw.item[pipe.name])
@@ -274,15 +274,15 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, category)
   end
 
   for _, pipe_connection in pairs(u_pipe.fluid_box.pipe_connections) do
-    pipe_connection.connection_category = category or xutil.default_category
+    pipe_connection.connection_category = category or tomwub.default_category
   end
 
   -- set the collision mask to the connection_category collected earlier
-  u_pipe.collision_mask.layers[layer or xutil.default_layer] = true
+  u_pipe.collision_mask.layers[layer or tomwub.default_layer] = true
 
   -- shift everything down
   u_pipe.icon_draw_specification = u_pipe.icon_draw_specification or {}
-  u_pipe.icon_draw_specification.shift = util.by_pixel(0, xutil.downshift)
+  u_pipe.icon_draw_specification.shift = util.by_pixel(0, tomwub.downshift)
   u_pipe.icon_draw_specification.scale = 0.35
 
   -- hide flow pictures
@@ -298,11 +298,11 @@ xutil.make_tomwub_variant = function(pipe, mask, layer, category)
         filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
         size = {160, 160}
       },
-      offset = util.by_pixel(0, xutil.downshift),
+      offset = util.by_pixel(0, tomwub.downshift),
       distance = 0.65
     }
   end
   return u_pipe
 end
 
-return xutil
+return tomwub
