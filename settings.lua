@@ -14,16 +14,22 @@ data:extend{
     default_value = false,
     forced_value = false,
     hidden = not mods["no-pipe-touching"] or not not mods["color-coded-pipes"]
-  }
-}
-
-if mods["FluidMustFlow"] then
-  data:extend{{
+  },
+  {
+    type = "int-setting",
+    name = "tomwub-underground-indicators-range",
+    setting_type = "runtime-per-user",
+    default_value = 40,
+    maximum_value = 250,
+    minimum_value = 1
+  },
+  {
     type = "double-setting",
     setting_type = "startup",
     name = "fmf-pipe-opacity",
     minimum_value = 0,
     maximum_value = 1,
-    default_value = 0.25
-  }}
-end
+    default_value = 0.25,
+    hidden = not mods["FluidMustFlow"]
+  }
+}
