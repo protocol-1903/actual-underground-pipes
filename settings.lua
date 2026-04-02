@@ -1,11 +1,11 @@
 data:extend{
   {
     type = "double-setting",
-    setting_type = "startup",
+    setting_type = "runtime-global",
     name = "pipe-opacity",
     minimum_value = 0,
     maximum_value = 1,
-    default_value = 0.2
+    default_value = 0.7
   },
   {
     type = "bool-setting",
@@ -19,17 +19,8 @@ data:extend{
     type = "int-setting",
     name = "tomwub-underground-indicators-range",
     setting_type = "runtime-per-user",
-    default_value = 40,
+    default_value = 50,
     maximum_value = 250,
     minimum_value = 1
-  },
-  {
-    type = "double-setting",
-    setting_type = "startup",
-    name = "fmf-pipe-opacity",
-    minimum_value = 0,
-    maximum_value = 1,
-    default_value = 0.25,
-    hidden = not mods["FluidMustFlow"]
   }
 }

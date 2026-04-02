@@ -9,6 +9,7 @@
   "factorio_version": "2.0",
   "dependencies": [
     "base >= 2.0.44",
+    "perel >= 1.1.0",
     "! underground-pipe-pack",
     "! pipe_plus",
     "(?) no-pipe-touching",

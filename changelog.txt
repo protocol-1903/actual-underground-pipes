@@ -1,10 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.18
 Date: ????
+  Features:
+    - Added visualization mode so underground pipes are only shown when in hand. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/23
   Changes:
+    - Added dependency on PEREL for utilities
     - Underground pipes can only be selected when holding an underground pipe in the cursor. You will also be unable to select non-underground entities with an underground pipe in the cursor. This should make intaractions much easier. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/28
   Bugfixes:
+    - Fixed fluid must flow pipe opacity setting not doing anything by... removing it
     - Fixed weaving notification going off when no pipe touching is disabled
+    - Fixed missing space platform support for certain cases
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.17
 Date: 2026-02-15

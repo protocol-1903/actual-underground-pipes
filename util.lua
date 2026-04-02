@@ -6,17 +6,10 @@ tomwub.reformat = function(spritesheet)
     if type(sprite) == "table" then
       if sprite.layers then
         for _, sprit in pairs(sprite.layers) do
-          sprit.shift = util.by_pixel(0, tomwub.downshift)
-          if not s:find("visualization") then
-            sprit.tint = {
-              settings.startup["pipe-opacity"].value,
-              settings.startup["pipe-opacity"].value,
-              settings.startup["pipe-opacity"].value,
-              settings.startup["pipe-opacity"].value
-            }
-          end
-          if sprit.filename:sub(-10) == "shadow.png" then
+          if not s:find("visualization") or sprit.filename:sub(-10) == "shadow.png" then
             sprit.tint = {0, 0, 0, 0}
+          else
+            sprit.shift = util.by_pixel(0, tomwub.downshift)
           end
         end
       elseif sprite.north then
@@ -24,14 +17,10 @@ tomwub.reformat = function(spritesheet)
           tomwub.reformat(sprite[direction])
         end
       else
-        sprite.shift = util.by_pixel(0, tomwub.downshift)
-        if not s:find("visualization") then
-          sprite.tint = {
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value,
-            settings.startup["pipe-opacity"].value
-          }
+        if not s:find("visualization") or sprite.filename:sub(-10) == "shadow.png" then
+          sprite.tint = {0, 0, 0, 0}
+        else
+          sprite.shift = util.by_pixel(0, tomwub.downshift)
         end
       end
       if s:find("disabled_visualization") then
@@ -291,17 +280,14 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.pictures.middle_temperature_flow = nil
   u_pipe.pictures.high_temperature_flow = nil
 
-  -- add placement visualization
-  if settings.startup["pipe-opacity"].value == 0 then
-    u_pipe.radius_visualisation_specification = {
-      sprite = {
-        filename = "__the-one-mod-with-underground-bits__/graphics/placement-visualization.png",
-        size = {160, 160}
-      },
-      offset = util.by_pixel(0, tomwub.downshift),
-      distance = 0.65
-    }
-  end
+  u_pipe.radius_visualisation_specification = {
+    sprite = {
+      filename = "__the-one-mod-with-underground-bits__/graphics/indicators/pipe-straight-vertical-single.png",
+      size = 128
+    },
+    offset = util.by_pixel(0, tomwub.downshift),
+    distance = 0.65
+  }
   return u_pipe
 end
 
