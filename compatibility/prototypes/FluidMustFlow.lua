@@ -23,6 +23,24 @@ for i, t in pairs{
         {item = "duct-small", count = t == "duct" and 2 or t == "duct-small" and 1 or 4}
       }
     end
+    local bitmasks = {north = 0, east = 0, south = 0, west = 0}
+    for _, pipe_connection in pairs(tank.fluid_box.pipe_connections) do
+      bitmasks.north = bitmasks.north + 2 ^ ((pipe_connection.direction / 4) % 4)
+      bitmasks.east = bitmasks.east + 2 ^ ((pipe_connection.direction / 4 + 1) % 4)
+      bitmasks.south = bitmasks.south + 2 ^ ((pipe_connection.direction / 4 + 2) % 4)
+      bitmasks.west = bitmasks.west + 2 ^ ((pipe_connection.direction / 4 + 3) % 4)
+    end
+    for direction, bitmask in pairs(bitmasks) do
+      data:extend{{
+        type = "sprite",
+        name = ("tomwub-%s-indicator-%02d"):format(t, bitmask),
+        filename = tank.pictures.picture[direction].layers[1].filename,
+        height = tank.pictures.picture[direction].layers[1].height,
+        width = tank.pictures.picture[direction].layers[1].width,
+        scale = 0.5,
+        shift = util.by_pixel(0, tomwub.downshift)
+      }}
+    end
   end
 end
 
