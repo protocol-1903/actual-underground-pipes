@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.18
-Date: ????
+Date: 2026-04-04
   Features:
     - Added visualization mode so underground pipes are only shown when in hand. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/23
   Changes:
