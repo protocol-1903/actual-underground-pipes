@@ -240,6 +240,7 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.selection_priority = 255
   u_pipe.is_military_target = false
   u_pipe.fast_replaceable_group = settings.startup["npt-tomwub-weaving"].value and u_pipe.name or "tomwub-pipe"
+  u_pipe.next_upgrade = nil
 
   data:extend{item, u_pipe}
 
