@@ -3,6 +3,7 @@ Version: 1.0.19
 Date: ????
   Bugfixes:
     - Fixed a load error with pipes that had next_upgrade specified. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/33
+    - Fixed a crash when trying to render visualizations after deleting the last referenced visualization. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/34
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.18
 Date: 2026-04-04

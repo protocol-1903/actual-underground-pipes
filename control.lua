@@ -550,10 +550,12 @@ script.on_event(defines.events.on_tick, function (event)
   end
   -- update trackers
   local old_trackers = {}
-  for _ = 1, (storage.last_index or event.tick % ticks_per_update == 0) and storage.batch_size or 0 do
+  local limit = (storage.last_index or event.tick % ticks_per_update == 0) and storage.batch_size or 0
+  for i = 1, limit do
     local index, tracker = next(storage.trackers, storage.last_index)
     if tracker and (not tracker.entity.valid or (event.tick - tracker.last_tick) > 2 * ticks_per_scan) then
       old_trackers[#old_trackers+1] = index
+      if i == limit then i = limit - 1 end -- make sure we don't end on something thats going to be invalidated
     elseif tracker and next(tracker.players) then
       tracker.updates = (tracker.updates + 1) % checks_per_update
       update_render(tracker, tracker.updates == 0)
