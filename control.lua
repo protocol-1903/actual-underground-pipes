@@ -243,7 +243,7 @@ local function on_selected(event)
   local item = player.cursor_ghost and player.cursor_ghost.name.name or
     player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or nil
   if (not item or item:sub(1,7) ~= "tomwub-") and prototype.name:sub(1,7) == "tomwub-" then
-    player.selected = nil
+    player.selected = player.surface.find_entities_filtered{position = entity.position, collision_mask = prototype.collision_mask.layers, invert = true}[1]
   elseif item and item:sub(1,7) == "tomwub-" and prototype.name:sub(1,7) ~= "tomwub-" then
     player.selected = nil
   end
