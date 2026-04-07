@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.19
-Date: ????
+Date: 2026-04-07
   Bugfixes:
     - Fixed not being able to select entities on the same tile as underground pipes. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/35
     - Fixed a load error with pipes that had next_upgrade specified. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/33
