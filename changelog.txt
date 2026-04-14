@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.20
+Date: 2026-04-14
+  Bugfixes:
+    - Fixed a crash when indexing invalid visualizations. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/36
+---------------------------------------------------------------------------------------------------
 Version: 1.0.19
 Date: 2026-04-07
   Bugfixes:
