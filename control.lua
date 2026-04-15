@@ -394,6 +394,12 @@ local function on_built(event)
   -- teleport valid entities so that pipe visualizations appear properly
   if event.entity.name:sub(1,7) == "tomwub-" then
     event.entity.teleport(event.entity.position)
+
+    update_tracker(event.entity)
+    register_for_tracker(storage.trackers[event.entity.unit_number], event.player_index)
+    for _, e in pairs(perel.get_fluidbox_neighoburs(event.entity)) do
+      update_render(storage.trackers[e.unit_number], true)
+    end
   else
     local entities = event.entity.surface.find_entities_filtered{
       area = {
@@ -416,11 +422,6 @@ local function on_built(event)
 
   if not event.player_index or not storage.tomwub[event.player_index] then return end
   local player = game.get_player(event.player_index)
-  update_tracker(event.entity)
-  register_for_tracker(storage.trackers[event.entity.unit_number], player.index)
-  for _, e in pairs(perel.get_fluidbox_neighoburs(event.entity)) do
-    update_render(storage.trackers[e.unit_number], true)
-  end
 
   -- if player just placed last item, then signal to script to update hand again
   if player.is_cursor_empty() and storage.tomwub[player.index].item and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then

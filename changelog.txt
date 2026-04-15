@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.21
+Date: ???
+  Bugfixes:
+    - Fixed that placing normal pipes would create erronious underground visualizations
+---------------------------------------------------------------------------------------------------
 Version: 1.0.20
 Date: 2026-04-14
   Bugfixes:
