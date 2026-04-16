@@ -125,7 +125,7 @@ local function update_tracker(entity)
 end
 
 local function register_for_tracker(tracker, player_index)
-  if not tracker.players[player_index] then
+  if player_index and not tracker.players[player_index] then
     update_render(tracker)
     tracker.render.visible = true
     local players = tracker.render.players or {}
