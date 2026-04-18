@@ -209,8 +209,7 @@ tomwub.adjust_ptg = function(prototype, pipe)
   }
 
   prototype.collision_mask.layers[layer] = true
-  -- set the collision mask to the connection_category collected earlier
-
+  if settings.startup["npt-tomwub-weaving"].value then prototype.next_upgrade = nil end
   return underground_collision_mask, layer, connection_category
 end
 

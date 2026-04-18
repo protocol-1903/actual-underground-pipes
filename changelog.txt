@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.23
+Date: 2026-04-18
+  Bugfixes:
+    - Fixed a load error with pYsimple. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/40
+---------------------------------------------------------------------------------------------------
 Version: 1.0.22
 Date: 2026-04-16
   Bugfixes:
