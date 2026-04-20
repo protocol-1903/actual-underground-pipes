@@ -231,6 +231,10 @@ script.on_event(defines.events.on_player_controller_changed, function (event)
       quality = quality
     }
   end
+  if event.old_type == defines.controllers.remote then
+    storage.tomwub[player.index].count = nil
+    return
+  end
   storage.tomwub[player.index].count = -3 - count
 end)
 

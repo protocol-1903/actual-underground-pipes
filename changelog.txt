@@ -7,6 +7,7 @@ Date: ???
     - Properly error when pipe to grounds are not found
   Bugfixes:
     - Fixed a load error with nullius. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/43
+    - Fixed a crash when leaving remote view with an underground pipe in hand. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/42
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.23
 Date: 2026-04-18
