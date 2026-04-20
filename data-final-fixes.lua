@@ -9,10 +9,15 @@ for prototype in pairs(data.raw["damage-type"]) do
   }
 end
 
-for p, pipe in pairs(data.raw.pipe) do
-  for u, underground in pairs(data.raw["pipe-to-ground"]) do
+for u, underground in pairs(data.raw["pipe-to-ground"]) do
+  if not underground.ignore_by_tomwub then
     local i, j = u:find("-to-ground", nil, true)
-    if i and j and u:sub(1, i - 1) .. u:sub(j + 1) == p and not underground.ignore_by_tomwub then
+    if not i then
+       i, j = u:find("-underground", nil, true)
+    end
+    local p = i and j and u:sub(1, i - 1) .. (j and u:sub(j + 1) or "")
+    local pipe = data.raw.pipe[p]
+    if pipe then
       local mask, layer, connection_category = tomwub.adjust_ptg(underground, p)
       underground.heating_energy = pipe.heating_energy
       local u_pipe = tomwub.make_tomwub_variant(pipe, mask, layer, connection_category)
@@ -23,6 +28,8 @@ for p, pipe in pairs(data.raw.pipe) do
 
       -- save the tag for later use with assembling machines
       tags[#tags+1] = connection_category
+    else
+      error("Associated pipe [" .. p .. "] not found for [" .. u .. "]")
     end
   end
 end

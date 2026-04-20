@@ -3,6 +3,8 @@ Version: 1.0.24
 Date: ???
   Changes:
     - Updated pipe <-> pipe to ground automatic association logic for better automatic compatibility
+    - Iterate over pipe to grounds instead of pipes
+    - Properly error when pipe to grounds are not found
   Bugfixes:
     - Fixed a load error with nullius. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/43
 ---------------------------------------------------------------------------------------------------
