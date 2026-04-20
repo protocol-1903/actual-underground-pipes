@@ -11,7 +11,8 @@ end
 
 for p, pipe in pairs(data.raw.pipe) do
   for u, underground in pairs(data.raw["pipe-to-ground"]) do
-    if u:sub(1,-11) == p and not underground.ignore_by_tomwub then
+    local i, j = u:find("-to-ground", nil, true)
+    if i and j and u:sub(1, i - 1) .. u:sub(j + 1) == p and not underground.ignore_by_tomwub then
       local mask, layer, connection_category = tomwub.adjust_ptg(underground, p)
       underground.heating_energy = pipe.heating_energy
       local u_pipe = tomwub.make_tomwub_variant(pipe, mask, layer, connection_category)

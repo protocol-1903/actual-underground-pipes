@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.24
+Date: ???
+  Changes:
+    - Updated pipe <-> pipe to ground automatic association logic for better automatic compatibility
+  Bugfixes:
+    - Fixed a load error with nullius. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/43
+---------------------------------------------------------------------------------------------------
 Version: 1.0.23
 Date: 2026-04-18
   Bugfixes:
