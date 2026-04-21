@@ -8,6 +8,7 @@ Date: ???
   Bugfixes:
     - Fixed a load error with nullius. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/43
     - Fixed a crash when leaving remote view with an underground pipe in hand. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/42
+    - Fixed a crash when hovering over two layered underground pipes. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/41
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.23
 Date: 2026-04-18
