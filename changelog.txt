@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.25
+Date: 2026-04-21
+  Bugfixes:
+    - Fixed a load error with fluid must flow. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/44
+---------------------------------------------------------------------------------------------------
 Version: 1.0.24
 Date: 2026-04-20
   Changes:

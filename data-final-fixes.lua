@@ -9,8 +9,13 @@ for prototype in pairs(data.raw["damage-type"]) do
   }
 end
 
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/dredgeworks")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/underground-heat-pipe")
+
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
-  if not underground.ignore_by_tomwub then
+  if not underground.ignore_by_tomwub and not underground.solved_by_tomwub then
     local i, j = u:find("-to-ground", nil, true)
     if not i then
        i, j = u:find("-underground", nil, true)
@@ -40,11 +45,6 @@ if data.raw.tile["out-of-map"] and settings.startup["npt-tomwub-weaving"].value 
     data.raw.tile["out-of-map"].collision_mask.layers[layer] = true
   end
 end
-
-require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
-require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FlowControl")
-require("__the-one-mod-with-underground-bits__/compatibility/prototypes/dredgeworks")
-require("__the-one-mod-with-underground-bits__/compatibility/prototypes/underground-heat-pipe")
 
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
   if not underground.solved_by_tomwub and not underground.ignore_by_tomwub then
