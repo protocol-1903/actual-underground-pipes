@@ -27,6 +27,11 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 - [Parallel Piping](https://mods.factorio.com/mod/parallel-piping): full compatibility. In fact, they work rather well together! I can highly recommend it!
 - [No Pipe Touching](https://mods.factorio.com/mod/no-pipe-touching): NPT has full compatibility. Additionally, each type of pipe (as defined by NPT) can be weaved together in different layers of undergrounds via a mod setting. This is a heavy mechanic, though, and is known to crash the game in certain mod configurations. It will be automatically turned off in certain configurations known to crash the game.
 - [Fluid Must Flow](https://mods.factorio.com/mod/FluidMustFlow): Fluid Must Flow is fully compatible! Since v0.1.6, I have added full compatibility. There are some rough edges, but those will be fixed over time as I get player feedback on the changes.
+- [pYmods](https://mods.factorio.com/mod/pyalternativeenergy): Fully supported
+- [Nullius](https://mods.factorio.com/mod/nullius): Fully supported
+- [Krastorio 2](https://mods.factorio.com/mod/Krastorio2): Fully supported
+- [Space Exploration](https://mods.factorio.com/mod/space-exploration): Fully supported
+- [Bob's Logistics mod](https://mods.factorio.com/mod/boblogistics): Fully supported
 - [Elevated Pipes](https://mods.factorio.com/mod/elevated-pipes): Psuedo compatibility in that Elevated Pipes function as normal, and Underground Pipes do not interact with them. Saves using existing Elevated Pipes will not be modified.
 - [Advanced Fluid Handling](https://mods.factorio.com/mod/underground-pipe-pack): Unfortunately, AUP does not have native compatibility with AFH due to engine limitations. There's nothing that can be done in AUP to make it work, it would take some major rework of AFH scripting to make the two mods compatible. I don't see this as much of an issue, since both mods fill relatively similar roles. If it's brought up enough, something can probably be figured out.
 - [Pipe Plus](https://mods.factorio.com/mod/pipe_plus): Same issues as AFH.
