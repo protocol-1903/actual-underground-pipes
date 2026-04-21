@@ -20,7 +20,8 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
     if not i then
        i, j = u:find("-underground", nil, true)
     end
-    local p = i and j and u:sub(1, i - 1) .. (j and u:sub(j + 1) or "")
+    if not i or not j then error("Coult not find substring for [" .. u .. "]") end
+    local p = u:sub(1, i - 1) .. (j and u:sub(j + 1) or "")
     local pipe = data.raw.pipe[p]
     if pipe then
       local mask, layer, connection_category = tomwub.adjust_ptg(underground, p)
