@@ -32,6 +32,8 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 - [Krastorio 2](https://mods.factorio.com/mod/Krastorio2): Fully supported
 - [Space Exploration](https://mods.factorio.com/mod/space-exploration): Fully supported
 - [Bob's Logistics mod](https://mods.factorio.com/mod/boblogistics): Fully supported
+- [RGB Pipes](https://mods.factorio.com/mod/RGBPipes): Fully supported
+- [Color Coded Pipes](https://mods.factorio.com/mod/color-coded-pipes): Fully supported
 - [Elevated Pipes](https://mods.factorio.com/mod/elevated-pipes): Psuedo compatibility in that Elevated Pipes function as normal, and Underground Pipes do not interact with them. Saves using existing Elevated Pipes will not be modified.
 - [Advanced Fluid Handling](https://mods.factorio.com/mod/underground-pipe-pack): Unfortunately, AUP does not have native compatibility with AFH due to engine limitations. There's nothing that can be done in AUP to make it work, it would take some major rework of AFH scripting to make the two mods compatible. I don't see this as much of an issue, since both mods fill relatively similar roles. If it's brought up enough, something can probably be figured out.
 - [Pipe Plus](https://mods.factorio.com/mod/pipe_plus): Same issues as AFH.
