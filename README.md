@@ -26,7 +26,7 @@ Unfortunately, do to the hardcoded nature of belts, they can't be done in the sa
 # Compatibility
 - [Parallel Piping](https://mods.factorio.com/mod/parallel-piping): full compatibility. In fact, they work rather well together! I can highly recommend it!
 - [No Pipe Touching](https://mods.factorio.com/mod/no-pipe-touching): NPT has full compatibility. Additionally, each type of pipe (as defined by NPT) can be weaved together in different layers of undergrounds via a mod setting. This is a heavy mechanic, though, and is known to crash the game in certain mod configurations. It will be automatically turned off in certain configurations known to crash the game.
-- [Fluid Must Flow](https://mods.factorio.com/mod/FluidMustFlow): Fluid Must Flow is fully compatible! Since v0.1.6, I have added full compatibility. There are some rough edges, but those will be fixed over time as I get player feedback on the changes.
+- [Fluid Must Flow](https://mods.factorio.com/mod/FluidMustFlow): Fluid Must Flow is fully compatible! Since v0.1.6, I have added full compatibility. There are some rough edges, but those will be fixed over time as I get player feedback on the changes. It's recommended you use the [Duct Duct Go](https://mods.factorio.com/mod/duct-duct-go) patch, as it has better support and is easier to work with.
 - [pYmods](https://mods.factorio.com/mod/pyalternativeenergy): Fully supported
 - [Nullius](https://mods.factorio.com/mod/nullius): Fully supported
 - [Krastorio 2](https://mods.factorio.com/mod/Krastorio2): Fully supported
