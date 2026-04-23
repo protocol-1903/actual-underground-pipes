@@ -7,6 +7,8 @@ Date: 2026-04-23
     - Added support for Tiberium: Conquer and Dawn. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/45
     - Added support for Laser Fence. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/45
     - Added support for Unipipe with Temperature. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/45
+  Bugfixes:
+    - Added Fluid Must Flow placement visualizations, but requires Duct Duct Go. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/32
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.26
 Date: 2026-04-21
