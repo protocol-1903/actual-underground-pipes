@@ -155,6 +155,7 @@ local function deregister_trackers(player_index)
   end
 end
 
+local underground_pipes_by_mask = {}
 local targets = {}
 
 local function register_trackers(player_index, full_scan)
@@ -180,10 +181,12 @@ local function register_trackers(player_index, full_scan)
     y = y < math.floor(half) and - dist * (half - y - 0.5) or y + 1 > math.ceil(half) and dist * (y - half + 0.5) or 0
   }
 
-  if not targets[place_result.name] then
-    targets[place_result.name] = {}
-    for target in pairs(prototypes.get_entity_filtered{{filter = "collision-mask", mask = place_result.collision_mask, mask_mode = "collides"}}) do
-      targets[place_result.name][#targets[place_result.name]+1] = target
+  for layer in pairs(place_result.collision_mask.layers) do
+    if not targets[layer] then
+      targets[layer] = {}
+      for target in pairs(prototypes.get_entity_filtered{{filter = "collision-mask", mask = layer, mask_mode = "collides"}}) do
+        targets[layer][#targets[layer]+1] = target
+      end
     end
   end
   for _, type in pairs{
