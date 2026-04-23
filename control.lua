@@ -34,48 +34,49 @@ local function get_tint(entity)
     util.multiply_color(entity.get_fluid(1) and prototypes.fluid[entity.get_fluid(1).name].base_color or {1, 1, 1, 1}, settings.global["pipe-opacity"].value)
 end
 
-local indicator_alts = {
-  ["tomwub-duct-small"] = {
+local indicator_alts = {}
+if script.active_mods.FluidMustFlow and not script.active_mods["duct-duct-go"] then
+  indicator_alts["tomwub-duct-small"] = {
     [defines.direction.north] = "tomwub-duct-small-indicator-05",
     [defines.direction.east] = "tomwub-duct-small-indicator-10",
     [defines.direction.south] = "tomwub-duct-small-indicator-05",
     [defines.direction.west] = "tomwub-duct-small-indicator-10"
-  },
-  ["tomwub-duct"] = {
+  }
+  indicator_alts["tomwub-duct"] = {
     [defines.direction.north] = "tomwub-duct-indicator-05",
     [defines.direction.east] = "tomwub-duct-indicator-10",
     [defines.direction.south] = "tomwub-duct-indicator-05",
     [defines.direction.west] = "tomwub-duct-indicator-10"
-  },
-  ["tomwub-duct-long"] = {
+  }
+  indicator_alts["tomwub-duct-long"] = {
     [defines.direction.north] = "tomwub-duct-long-indicator-05",
     [defines.direction.east] = "tomwub-duct-long-indicator-10",
     [defines.direction.south] = "tomwub-duct-long-indicator-05",
     [defines.direction.west] = "tomwub-duct-long-indicator-10"
-  },
-  ["tomwub-duct-cross"] = {
+  }
+  indicator_alts["tomwub-duct-cross"] = {
     [defines.direction.north] = "tomwub-duct-north-indicator-15",
     [defines.direction.east] = "tomwub-duct-east-indicator-15",
     [defines.direction.south] = "tomwub-duct-south-indicator-15",
     [defines.direction.west] = "tomwub-duct-west-indicator-15",
-  },
-  ["tomwub-duct-curve"] = {
+  }
+  indicator_alts["tomwub-duct-curve"] = {
     [defines.direction.north] = "tomwub-duct-curve-indicator-09",
     [defines.direction.east] = "tomwub-duct-curve-indicator-03",
     [defines.direction.south] = "tomwub-duct-curve-indicator-06",
     [defines.direction.west] = "tomwub-duct-curve-indicator-12",
-  },
-  ["tomwub-duct-t-junction"] = {
+  }
+  indicator_alts["tomwub-duct-t-junction"] = {
     [defines.direction.north] = "tomwub-duct-t-junction-indicator-11",
     [defines.direction.east] = "tomwub-duct-t-junction-indicator-07",
     [defines.direction.south] = "tomwub-duct-t-junction-indicator-14",
     [defines.direction.west] = "tomwub-duct-t-junction-indicator-13",
-  },
-}
+  }
+end
 
 local function get_indicator(entity)
   local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
-  return indicator_alts[name] and indicator_alts[name][entity.direction] or "tomwub-indicator-%02d"
+  return indicator_alts[name] and indicator_alts[name][entity.direction] or name:find("tomwub-duct", nil, true) and "tomwub-duct-indicator-%02d" or "tomwub-indicator-%02d"
 end
 
 local function update_render(tracker, update)

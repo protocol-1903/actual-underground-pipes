@@ -1,8 +1,8 @@
-if not mods["FluidMustFlow"] then return end
+if not mods["FluidMustFlow"] or mods["duct-duct-go"] then return end
 
 local underground = data.raw["pipe-to-ground"]["duct-underground"]
 local mask, layer, connection_category = tomwub.adjust_ptg(underground, "duct")
-underground.heating_energy = data.raw["storage-tank"].duct.heating_energy
+underground.heating_energy = data.raw["storage-tank"]["duct-small"].heating_energy
 
 for i, t in pairs{
   "duct-curve",
@@ -13,7 +13,7 @@ for i, t in pairs{
   "duct-long"
 } do
   local tank = data.raw["storage-tank"][t]
-  if tank then
+  if tank and not tank.ignore_by_tomwub then
     local u_tank = tomwub.make_tomwub_variant(tank, mask, layer, connection_category)
     u_tank.placeable_by = { {item = "tomwub-pipe", count = 1}, {item = "pipe", count = 1}, {item = "tomwub-" .. t, count = 1}, {item = t, count = 1} }
     tomwub.reformat(u_tank.pictures.picture)

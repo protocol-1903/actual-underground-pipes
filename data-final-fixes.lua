@@ -40,6 +40,8 @@ for u, underground in pairs(data.raw["pipe-to-ground"]) do
   end
 end
 
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/duct-duct-go")
+
 -- they can only be placed inside the map
 if data.raw.tile["out-of-map"] and settings.startup["npt-tomwub-weaving"].value then
   for _, layer in pairs(tags) do
