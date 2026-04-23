@@ -11,6 +11,9 @@ end
 
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/FluidMustFlow")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/dredgeworks")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Factorio-Tiberium")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/laserfence")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Unipipe-Temperature")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/underground-heat-pipe")
 
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
