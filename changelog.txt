@@ -1,5 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.27
+Date: 2026-04-26
+  Bugfixes:
+    - Fixed load order issue with v1.0.1 of Duct Duct Go
+---------------------------------------------------------------------------------------------------
+Version: 1.0.27
 Date: 2026-04-23
   Changes:
     - Cache underground pipes by collision layer instead of by name
