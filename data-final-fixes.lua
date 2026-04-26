@@ -15,6 +15,8 @@ require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Factorio
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/laserfence")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Unipipe-Temperature")
 require("__the-one-mod-with-underground-bits__/compatibility/prototypes/underground-heat-pipe")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Krastorio2")
+require("__the-one-mod-with-underground-bits__/compatibility/prototypes/Krastorio2-spaced-out")
 
 for u, underground in pairs(data.raw["pipe-to-ground"]) do
   if not underground.ignore_by_tomwub and not underground.solved_by_tomwub then
