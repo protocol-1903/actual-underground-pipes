@@ -130,35 +130,16 @@ local recycling = mods["quality"] and require("__quality__.prototypes.recycling"
 
 tomwub.adjust_recipes = function(u)
   log("adjusting recipes for: " .. u)
-  -- if recipe exists
-  if not mods["bztin"] then
-    -- fix normal recipes
-    for _, recipe in pairs{
-      u,
-      "casting-" .. u
-    } do
-      -- if recipe exists
-      if data.raw.recipe[recipe] then
-        -- just pipes, set to 2
-        if #data.raw.recipe[recipe].ingredients == 1 and data.raw.recipe[recipe].ingredients[1].name:find("pipe") then
-          data.raw.recipe[recipe].ingredients[1].amount = 2
-        else -- not just pipes, get rid of them
-          local ingredients = table.deepcopy(data.raw.recipe[recipe].ingredients)
-          data.raw.recipe[recipe].ingredients = {}
-          -- add ingredient if not the associated pipe
-          for _, ingredient in pairs(ingredients) do
-            if not ingredient.name:find("pipe") then
-              data.raw.recipe[recipe].ingredients[#data.raw.recipe[recipe].ingredients+1] = ingredient
-            end
-          end
+  for _, recipe in pairs{
+    u,
+    "casting-" .. u
+  } do
+    -- if recipe exists
+    if data.raw.recipe[recipe] then
+      for _, ingredient in pairs(data.raw.recipe[recipe].ingredients) do
+        if data.raw.pipe[ingredient.name] and ingredient.amount > 2 then
+          ingredient.amount = 2 -- if a pipe, set amount to 2
         end
-      end
-    end
-  elseif mods["bztin"] and data.raw.recipe[u] then
-    -- modify counts
-    for _, ingredient in pairs(data.raw.recipe[u].ingredients) do
-      if data.raw.pipe[ingredient.name] and ingredient.amount > 2 then
-        ingredient.amount = 2 -- if a pipe, set amount to 2
       end
     end
   end
