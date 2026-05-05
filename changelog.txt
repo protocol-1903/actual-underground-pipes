@@ -7,6 +7,8 @@ Date: 2026-05-05
     - Fixed that nullius pipe to ground recipes required just sand/gravel/concrete
   Bugfixes:
     - Fixed missing locale for undergound pipe render distance setting
+    - Fixed that ghost underground pipes could be selected without an underground pipe in the cursor
+    - Fixed that switching from normal to underground pipes would not render underground pipes
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.29
 Date: 2026-04-26

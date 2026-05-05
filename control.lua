@@ -7,8 +7,9 @@ script.on_init(function ()
   storage.weaving = settings.startup["npt-tomwub-weaving"].value
   storage.trackers = {}
   storage.tracker_count = 0
-  storage.scans = {}
   storage.last_index = nil
+  storage.scanned_entities = {}
+  storage.scan_count = 0
 end)
 
 script.on_configuration_changed(function (event)
@@ -16,7 +17,8 @@ script.on_configuration_changed(function (event)
   storage.trackers = storage.trackers or {}
   storage.tracker_count = storage.tracker_count or 0
   storage.last_index = storage.last_index or nil
-  storage.scans = storage.scans or {}
+  storage.scanned_entities = storage.scanned_entities or {}
+  storage.scan_count = storage.scan_count or 0
   if script.active_mods["no-pipe-touching"] and (not (event.mod_changes["no-pipe-touching"] or {}).old_version and storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value or
     storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value and event.mod_startup_settings_changed) then
     game.print("Underground pipe layers can no longer be stacked by default. If you wish to enable this feature, please enable the mod setting: Enable underground pipe weaving")
@@ -25,8 +27,8 @@ script.on_configuration_changed(function (event)
 end)
 
 local ticks_per_scan = 181 -- ticks between full scans for new entities
-local subscans = 6 -- size of subscan grid. 3 means 9 total scans, in a 3x3 square
 local ticks_per_update = 251 -- ticks between tracker checks
+local min_registrations_per_tick = 12 -- minumum number of tracker registrations per tick
 local checks_per_update = 4 -- checks before a tracker's tint and mask are updated
 
 local function get_tint(entity)
@@ -102,6 +104,7 @@ local function update_render(tracker, update)
 end
 
 local function update_tracker(entity)
+  if not entity.valid then return end
   if storage.trackers[entity.unit_number] then
     storage.trackers[entity.unit_number].last_tick = game.tick
     return
@@ -116,7 +119,7 @@ local function update_tracker(entity)
     mask = mask,
     render = rendering.draw_sprite{
       sprite = get_indicator(entity):format(mask),
-      target = entity.position,
+      target = entity,
       surface = entity.surface_index,
       tint = get_tint(entity),
       render_layer = "elevated-higher-object"
@@ -153,13 +156,17 @@ local function deregister_trackers(player_index)
     end
     tracker.players[player_index] = nil
   end
+  for _, tuple in pairs(storage.scanned_entities) do
+    tuple.players[player_index] = nil
+  end
 end
 
 local underground_pipes_by_mask = {}
-local targets = {}
 
-local function register_trackers(player_index, full_scan)
+local function scan_for_entities(player_index)
   local player = game.get_player(player_index)
+
+  deregister_trackers(player_index)
 
   local item = player.cursor_ghost and player.cursor_ghost.name or
   player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.prototype or nil
@@ -168,47 +175,35 @@ local function register_trackers(player_index, full_scan)
   local place_result = item.place_result
   if not place_result or place_result.name:sub(1, 7) ~= "tomwub-" then return end
 
-  local scan_index = storage.scans[player_index] or 0
-  scan_index = (scan_index + 1) % subscans ^ 2
-  storage.scans[player_index] = scan_index
-
-  local x, y = scan_index % subscans, math.floor(scan_index / subscans)
-  local half = subscans / 2
-  local ref = player.position
-  local dist = player.mod_settings["tomwub-underground-indicators-range"].value / (full_scan and 1 or subscans)
-  local offset = full_scan and {x = 0, y = 0} or {
-    x = x < math.floor(half) and - dist * (half - x - 0.5) or x + 1 > math.ceil(half) and dist * (x - half + 0.5) or 0,
-    y = y < math.floor(half) and - dist * (half - y - 0.5) or y + 1 > math.ceil(half) and dist * (y - half + 0.5) or 0
-  }
-
   for layer in pairs(place_result.collision_mask.layers) do
-    if not targets[layer] then
-      targets[layer] = {}
+    if not underground_pipes_by_mask[layer] then
+      underground_pipes_by_mask[layer] = {}
       for target in pairs(prototypes.get_entity_filtered{{filter = "collision-mask", mask = layer, mask_mode = "collides"}}) do
-        targets[layer][#targets[layer]+1] = target
+        underground_pipes_by_mask[layer][#underground_pipes_by_mask[layer]+1] = target
       end
     end
   end
+
   for _, type in pairs{
     "name",
     "ghost_name"
   } do
     for _, entity in pairs(player.surface.find_entities_filtered{
-      area = {
-        {
-          ref.x + offset.x - dist / 2,
-          ref.y + offset.y - dist / 2
-        },
-        {
-          ref.x + offset.x + dist / 2,
-          ref.y + offset.y + dist / 2
-        }
-      },
-      [type] = targets[place_result.name]
+      position = player.position,
+      radius = player.mod_settings["tomwub-underground-indicators-range"].value,
+      [type] = underground_pipes_by_mask[place_result.name]
     }) do
       if (entity.name == "entity-ghost" and entity.ghost_name or entity.name):sub(1, 7) == "tomwub-" then
-        update_tracker(entity)
-        register_for_tracker(storage.trackers[entity.unit_number], player_index)
+        if storage.trackers[entity.unit_number] then
+          -- update tracker, if it exists
+          update_tracker(entity)
+          register_for_tracker(storage.trackers[entity.unit_number], player_index)
+        else
+          -- otherwise cache
+          storage.scan_count = storage.scan_count + (storage.scanned_entities[entity.unit_number] and 0 or 1)
+          storage.scanned_entities[entity.unit_number] = storage.scanned_entities[entity.unit_number] or {entity = entity, players = {}}
+          storage.scanned_entities[entity.unit_number].players[player_index] = true
+        end
       end
     end
   end
@@ -417,19 +412,7 @@ local function on_built(event)
       update_render(storage.trackers[e.unit_number], true)
     end
   else
-    local entities = event.entity.surface.find_entities_filtered{
-      area = {
-        {
-          event.entity.position.x - event.entity.prototype.collision_box.left_top.x,
-          event.entity.position.y - event.entity.prototype.collision_box.left_top.y
-        },
-        {
-          event.entity.position.x + event.entity.prototype.collision_box.right_bottom.x,
-          event.entity.position.y + event.entity.prototype.collision_box.right_bottom.y
-        }
-      }
-    }
-    for _, pipe in pairs(entities) do
+    for _, pipe in pairs(event.entity.surface.find_entities_filtered{area = event.entity.bounding_box}) do
       if pipe.name:sub(1,7) == "tomwub-" then
         pipe.teleport(pipe.position)
       end
@@ -523,7 +506,7 @@ script.on_event("tomwub-swap-layer", function(event)
         }
       end
     end
-    -- register_trackers(player.index, true)
+    scan_for_entities(player.index)
   end
 
   -- update selected entity
@@ -538,15 +521,30 @@ script.on_event("tomwub-swap-layer", function(event)
 end)
 
 script.on_event(defines.events.on_player_changed_surface, function (event)
-  register_trackers(event.player_index, true)
+  scan_for_entities(event.player_index)
 end)
 
 script.on_event(defines.events.on_tick, function (event)
   -- register trackers
   for player_index in pairs(game.connected_players) do
-    if (event.tick + player_index) % math.floor(ticks_per_scan / subscans ^ 2) == 0 then
-      register_trackers(player_index)
+    if (event.tick + player_index) % ticks_per_scan == 0 then
+      scan_for_entities(player_index)
     end
+  end
+  -- validate and register cached scan data
+  local registrations = math.ceil(storage.scan_count / (event.tick + ticks_per_scan / 2) % ticks_per_scan)
+  registrations = registrations > min_registrations_per_tick and registrations or min_registrations_per_tick
+  for _ = 1, registrations do
+    local i, tuple = next(storage.scanned_entities)
+    if not tuple then break end
+    if next(tuple.players) and tuple.entity.valid then
+      update_tracker(tuple.entity)
+      for player_index in pairs(tuple.players) do
+        register_for_tracker(storage.trackers[tuple.entity.unit_number], player_index)
+      end
+    end
+    storage.scanned_entities[i] = nil
+    storage.scan_count = storage.scan_count - 1
   end
   -- update the size of each batch at the start of the loop so everything updates at the same rate
   if event.tick % ticks_per_update == 0 then
@@ -572,8 +570,7 @@ script.on_event(defines.events.on_tick, function (event)
   -- remove old trackers
   for _, index in pairs(old_trackers) do
     storage.tracker_count = storage.tracker_count - 1
-    local render = storage.trackers[index].render
-    if render and render.valid then render.destroy() end
+    if storage.trackers[index] and storage.trackers[index].render and storage.trackers[index].valid then storage.trackers[index].destroy() end
     storage.trackers[index] = nil
   end
 end)
