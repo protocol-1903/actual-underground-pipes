@@ -5,6 +5,8 @@ Date: 2026-05-05
     - Pipe to ground recipes will now require up to two pipes instead of none
   Compatibility:
     - Fixed that nullius pipe to ground recipes required just sand/gravel/concrete
+  Bugfixes:
+    - Fixed missing locale for undergound pipe render distance setting
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.29
 Date: 2026-04-26
