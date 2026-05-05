@@ -253,7 +253,7 @@ local function on_selected(event)
   if (not item or item:sub(1,7) ~= "tomwub-") and prototype.name:sub(1,7) == "tomwub-" then
     local entities = player.surface.find_entities_filtered{position = entity.position, collision_mask = prototype.collision_mask.layers, invert = true}
     for _, entity in pairs(entities) do
-      local name = entity.name == "ghost-entity" and entity.ghost_name or entity.name
+      local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
       if name:sub(1,7) ~= "tomwub-" then
         player.selected = entity
         return
