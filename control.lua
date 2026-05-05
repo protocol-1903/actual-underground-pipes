@@ -457,18 +457,6 @@ script.on_event(defines.events.on_space_platform_built_entity, on_built, event_f
 script.on_event(defines.events.script_raised_built, on_built, event_filter)
 script.on_event(defines.events.script_raised_revive, on_built, event_filter)
 
-local function on_destroyed(event)
-  local tracker = storage.trackers[event.entity.unit_number]
-  if not tracker then return end
-  tracker.render.destroy()
-end
-
-script.on_event(defines.events.on_player_mined_entity, on_destroyed, event_filter)
-script.on_event(defines.events.on_robot_mined_entity, on_destroyed, event_filter)
-script.on_event(defines.events.on_space_platform_mined_entity, on_destroyed, event_filter)
-script.on_event(defines.events.script_raised_destroy, on_destroyed, event_filter)
-script.on_event(defines.events.on_entity_died, on_destroyed, event_filter)
-
 -- swap between aboveground and belowground layers
 script.on_event("tomwub-swap-layer", function(event)
   local player = game.get_player(event.player_index)
