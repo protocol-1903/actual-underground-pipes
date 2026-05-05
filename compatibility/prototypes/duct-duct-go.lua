@@ -40,3 +40,6 @@ for bitmask, picture in pairs{
     shift = {shift[1], shift[2] + tomwub.downshift / 32}
   }}
 end
+
+-- since we arent crafting the underground bits anymore
+data.raw.recipe["duct-underground"].ingredients[1].amount = 16

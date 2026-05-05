@@ -5,6 +5,7 @@ Date: 2026-05-05
     - Pipe to ground recipes will now require up to two pipes instead of none
   Compatibility:
     - Fixed that nullius pipe to ground recipes required just sand/gravel/concrete
+    - Fixed that duct to grounds with duct duct go installed would not have their recipes adjusted
   Bugfixes:
     - Fixed missing locale for undergound pipe render distance setting
     - Fixed that ghost underground pipes could be selected without an underground pipe in the cursor
