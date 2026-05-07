@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.2
+Date: 2026-05-07
+  Compatibility:
+    - Fixed load error with linox. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/48
+---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: 2026-05-06
   Bugfixes:
