@@ -3,6 +3,8 @@ Version: 1.1.1
 Date: 2026-05-06
   Bugfixes:
     - Fixed that selection would attempt to select entities with the `not-selectable-in-game` flag
+    - Fixed that robot built underground pipes would show up regardless of if visualizations were enabled
+    - Fixed that robots building underground pipes would make the pipes disappear for a bit
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2026-05-05

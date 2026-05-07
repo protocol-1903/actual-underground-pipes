@@ -122,7 +122,8 @@ local function update_tracker(entity)
       target = entity,
       surface = entity.surface_index,
       tint = get_tint(entity),
-      render_layer = "elevated-higher-object"
+      render_layer = "elevated-higher-object",
+      visible = false
     }
   }
   storage.trackers[entity.unit_number] = tracker
@@ -130,6 +131,12 @@ end
 
 local function register_for_tracker(tracker, player_index)
   if player_index and not tracker.players[player_index] then
+    if tracker.entity.type == "entity-ghost" then
+      local tags = tracker.entity.tags or {}
+      tags.tomwub_players = tags.tomwub_players or {}
+      tags.tomwub_players[player_index] = true
+      tracker.entity.tags = tags
+    end
     update_render(tracker)
     tracker.render.visible = true
     local players = tracker.render.players or {}
@@ -152,6 +159,12 @@ local function deregister_trackers(player_index)
       tracker.render.players = players
       if #players == 0 then
         tracker.render.visible = false
+      end
+      if tracker.entity.type == "entity-ghost" then
+        local tags = tracker.entity.tags or {}
+        tags.tomwub_players = tags.tomwub_players or {}
+        tags.tomwub_players[player_index] = nil
+        tracker.entity.tags = tags
       end
     end
     tracker.players[player_index] = nil
@@ -407,10 +420,16 @@ local function on_built(event)
   if event.entity.name:sub(1,7) == "tomwub-" then
     event.entity.teleport(event.entity.position)
 
-    update_tracker(event.entity)
-    register_for_tracker(storage.trackers[event.entity.unit_number], event.player_index)
-    for _, e in pairs(perel.get_fluidbox_neighoburs(event.entity)) do
-      update_render(storage.trackers[e.unit_number], true)
+    if event.player_index or event.tags and event.tags.tomwub_players then
+      local players = event.tags and event.tags.tomwub_players or {}
+      if event.player_index then players[event.player_index] = true end
+      update_tracker(event.entity)
+      for player_index in pairs(players) do
+        register_for_tracker(storage.trackers[event.entity.unit_number], player_index)
+      end
+      for _, e in pairs(perel.get_fluidbox_neighoburs(event.entity)) do
+        update_render(storage.trackers[e.unit_number], true)
+      end
     end
   else
     for _, pipe in pairs(event.entity.surface.find_entities_filtered{area = event.entity.bounding_box}) do
