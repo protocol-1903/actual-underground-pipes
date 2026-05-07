@@ -249,7 +249,8 @@ local function on_selected(event)
     local entities = player.surface.find_entities_filtered{position = entity.position, collision_mask = prototype.collision_mask.layers, invert = true}
     for _, entity in pairs(entities) do
       local name = entity.name == "entity-ghost" and entity.ghost_name or entity.name
-      if name:sub(1,7) ~= "tomwub-" then
+      local prototype = entity.name == "entity-ghost" and entity.ghost_prototype or entity.prototype
+      if name:sub(1,7) ~= "tomwub-" and not prototype.has_flag("not-selectable-in-game") then
         player.selected = entity
         return
       end

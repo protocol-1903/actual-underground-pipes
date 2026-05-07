@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2026-05-06
+  Bugfixes:
+    - Fixed that selection would attempt to select entities with the `not-selectable-in-game` flag
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2026-05-05
   Changes:
