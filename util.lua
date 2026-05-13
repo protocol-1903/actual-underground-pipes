@@ -222,7 +222,7 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.fast_replaceable_group = settings.startup["npt-tomwub-weaving"].value and u_pipe.name or "tomwub-pipe"
   u_pipe.next_upgrade = nil
 
-  data:extend{item, u_pipe}
+  data:extend{u_pipe, item}
 
   -- since we can only check while in the loop
   if settings.startup["npt-tomwub-weaving"].value and table_size(data.raw["collision-layer"]) == 55 then

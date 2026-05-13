@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+Date: 2026-05-13
+  Changes:
+    - Fixed that fluid must flow ducts would not have underground variants when duct auto join was enabled
+---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2026-05-07
   Compatibility:
