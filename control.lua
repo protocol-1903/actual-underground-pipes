@@ -237,11 +237,14 @@ script.on_event(defines.events.on_player_controller_changed, function (event)
 
   if player.controller_type == defines.controllers.remote and event.old_type ~= defines.controllers.editor and count > 0 then
     -- was previously holding item, just put it away so put pipes back into inventory
-    player.character.get_main_inventory().insert {
-      name = item:sub(8, -1),
-      count = count,
-      quality = quality
-    }
+    local restored_item = item:sub(8, -1)
+    if not prototypes.item[restored_item].flags["only-in-cursor"] then
+	    player.character.get_main_inventory().insert {
+      	name = restored_item,
+      	count = count,
+      	quality = quality
+    	}
+    end
   end
   if event.old_type == defines.controllers.remote then
     storage.tomwub[player.index].count = nil
@@ -331,9 +334,12 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
     -- was previously holding item, just put it away so put pipes back into inventory
     deregister_trackers(player.index)
 
+    local restored_item = old_item:sub(8, -1)
+    if prototypes.item[restored_item].flags["only-in-cursor"] then goto skip_restoration end
+
     -- get amount added to inventory
     local inserted = player.get_main_inventory().insert {
-      name = old_item:sub(8, -1),
+      name = restored_item,
       count = old_count,
       quality = old_quality
     }
@@ -370,6 +376,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
 
       return -- return early, we don't want to run other code
     end
+    ::skip_restoration::
   elseif old_count < -3 and not player.is_cursor_empty() and item:sub(1,7) == "tomwub-" then
 
     local amount_removed = player.controller_type == defines.controllers.editor and -3 - old_count or player.get_main_inventory().remove{
