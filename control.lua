@@ -81,6 +81,15 @@ local function get_indicator(entity)
   return indicator_alts[name] and indicator_alts[name][entity.direction] or name:find("tomwub-duct", nil, true) and "tomwub-duct-indicator-%02d" or "tomwub-indicator-%02d"
 end
 
+local function insert_if_safe(inventory, item, quality, count)
+  if prototypes.item[item].flags["only-in-cursor"] then return end
+  return inventory.insert{
+    name = item,
+    quality = quality,
+    count = count
+  }
+end
+
 local function update_render(tracker, update)
   if not tracker then return end
   local entity = tracker.entity
@@ -237,11 +246,7 @@ script.on_event(defines.events.on_player_controller_changed, function (event)
 
   if player.controller_type == defines.controllers.remote and event.old_type ~= defines.controllers.editor and count > 0 then
     -- was previously holding item, just put it away so put pipes back into inventory
-    player.character.get_main_inventory().insert {
-      name = item:sub(8, -1),
-      count = count,
-      quality = quality
-    }
+    insert_if_safe(player.character.get_main_inventory(), item:sub(8, -1), quality, count)
   end
   if event.old_type == defines.controllers.remote then
     storage.tomwub[player.index].count = nil
@@ -332,16 +337,12 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
     deregister_trackers(player.index)
 
     -- get amount added to inventory
-    local inserted = player.get_main_inventory().insert {
-      name = old_item:sub(8, -1),
-      count = old_count,
-      quality = old_quality
-    }
+    local inserted = insert_if_safe(player.character.get_main_inventory(), old_item:sub(8, -1), old_quality, old_count)
 
     on_selected(event)
 
     -- something must be obstructing the cursor, put it back
-    if inserted ~= old_count then
+    if inserted and inserted ~= old_count then
       -- the only reason to do it conditionally is if the player cannot insert them, then it'll play some noise and notify the player for no reason
       if count and player.can_insert{
         name = item,

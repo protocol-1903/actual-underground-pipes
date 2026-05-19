@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.4
+Date: 2026-05-18
+  Bugfixes:
+    - Fixed that items that only exist in the cursor would break certain logic steps. Resolved for color coded pipe planner, courtesy of @PennyJim
+---------------------------------------------------------------------------------------------------
 Version: 1.1.3
 Date: 2026-05-18
   Changes:
