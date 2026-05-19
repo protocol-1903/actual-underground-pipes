@@ -337,7 +337,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
     deregister_trackers(player.index)
 
     -- get amount added to inventory
-    local inserted = insert_if_safe(player.character.get_main_inventory(), old_item:sub(8, -1), old_quality, old_count)
+    local inserted = insert_if_safe(player.get_main_inventory(), old_item:sub(8, -1), old_quality, old_count)
 
     on_selected(event)
 
