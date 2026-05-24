@@ -57,10 +57,10 @@ if script.active_mods.FluidMustFlow and not script.active_mods["duct-duct-go"] t
     [defines.direction.west] = "tomwub-duct-long-indicator-10"
   }
   indicator_alts["tomwub-duct-cross"] = {
-    [defines.direction.north] = "tomwub-duct-north-indicator-15",
-    [defines.direction.east] = "tomwub-duct-east-indicator-15",
-    [defines.direction.south] = "tomwub-duct-south-indicator-15",
-    [defines.direction.west] = "tomwub-duct-west-indicator-15",
+    [defines.direction.north] = "tomwub-duct-cross-indicator-15",
+    [defines.direction.east] = "tomwub-duct-cross-indicator-15",
+    [defines.direction.south] = "tomwub-duct-cross-indicator-15",
+    [defines.direction.west] = "tomwub-duct-cross-indicator-15",
   }
   indicator_alts["tomwub-duct-curve"] = {
     [defines.direction.north] = "tomwub-duct-curve-indicator-09",
