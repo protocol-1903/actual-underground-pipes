@@ -420,6 +420,13 @@ local function on_built(event)
   -- teleport valid entities so that pipe visualizations appear properly
   local entity = event.entity
   local player_index = event.player_index
+  if not player_index and entity.last_user then
+    -- ensure the player is holding a valid item (entity was placed by script while referencing player)
+    local player = game.get_player(entity.last_user.index)
+    local item = not player.is_cursor_empty() and player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.name or
+      player.cursor_ghost and player.cursor_ghost.name.name or nil
+    if item and item:sub(1,7) == "tomwub-" then player_index = player.index end
+  end
   local name = event.entity.type == "entity-ghost" and entity.ghost_name or entity.name
   if name:sub(1,7) == "tomwub-" then
     entity.teleport(event.entity.position)
