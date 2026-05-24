@@ -418,30 +418,33 @@ end)
 -- on placed entity
 local function on_built(event)
   -- teleport valid entities so that pipe visualizations appear properly
-  if event.entity.name:sub(1,7) == "tomwub-" then
-    event.entity.teleport(event.entity.position)
+  local entity = event.entity
+  local player_index = event.player_index
+  local name = event.entity.type == "entity-ghost" and entity.ghost_name or entity.name
+  if name:sub(1,7) == "tomwub-" then
+    entity.teleport(event.entity.position)
 
-    if event.player_index or event.tags and event.tags.tomwub_players then
+    if player_index or event.tags and event.tags.tomwub_players then
       local players = event.tags and event.tags.tomwub_players or {}
-      if event.player_index then players[event.player_index] = true end
-      update_tracker(event.entity)
-      for player_index in pairs(players) do
-        register_for_tracker(storage.trackers[event.entity.unit_number], player_index)
+      if player_index then players[player_index] = true end
+      update_tracker(entity)
+      for index in pairs(players) do
+        register_for_tracker(storage.trackers[event.entity.unit_number], index)
       end
       for _, e in pairs(perel.get_fluidbox_neighoburs(event.entity)) do
         update_render(storage.trackers[e.unit_number], true)
       end
     end
   else
-    for _, pipe in pairs(event.entity.surface.find_entities_filtered{area = event.entity.bounding_box}) do
+    for _, pipe in pairs(entity.surface.find_entities_filtered{area = entity.bounding_box}) do
       if pipe.name:sub(1,7) == "tomwub-" then
         pipe.teleport(pipe.position)
       end
     end
   end
 
-  if not event.player_index or not storage.tomwub[event.player_index] then return end
-  local player = game.get_player(event.player_index)
+  if not player_index or not storage.tomwub[player_index] then return end
+  local player = game.get_player(player_index)
 
   -- if player just placed last item, then signal to script to update hand again
   if storage.tomwub[player.index].item and storage.tomwub[player.index].item:sub(1,7) == "tomwub-" and storage.tomwub[player.index].count == 1 then
@@ -449,8 +452,8 @@ local function on_built(event)
 
     -- set ghost cursor
     player.cursor_ghost = {
-      name = event.entity.name,
-      quality = event.entity.quality
+      name = entity.name,
+      quality = entity.quality
     }
   end
 end
