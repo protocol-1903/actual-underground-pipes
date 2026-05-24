@@ -3,6 +3,7 @@ Version: 1.1.6
 Date: ????
   Bugfixes:
     - Fixed a crash when trying to render Fluid Must Flow underground duct cross. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/54
+    - Fixed that certain mod combinations would duplicate items when the last underground pipe in the cursor is placed. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/55
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.5
 Date: 2026-05-19
