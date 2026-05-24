@@ -22,5 +22,33 @@ data:extend{
     default_value = 50,
     maximum_value = 250,
     minimum_value = 1
+  },
+  {
+    type = "int-setting",
+    name = "tomwub-ticks-per-scan",
+    setting_type = "runtime-global",
+    default_value = 181,
+    minimum_value = 1
+  },
+  {
+    type = "int-setting",
+    name = "tomwub-ticks-per-update",
+    setting_type = "runtime-global",
+    default_value = 251,
+    minimum_value = 1
+  },
+  {
+    type = "int-setting",
+    name = "tomwub-min-registrations-per-tick",
+    setting_type = "runtime-global",
+    default_value = 12,
+    minimum_value = 1
+  },
+  {
+    type = "int-setting",
+    name = "tomwub-checks-per-update",
+    setting_type = "runtime-global",
+    default_value = 4,
+    minimum_value = 1
   }
 }

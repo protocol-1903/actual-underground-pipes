@@ -26,10 +26,17 @@ script.on_configuration_changed(function (event)
   storage.weaving = settings.startup["npt-tomwub-weaving"].value
 end)
 
-local ticks_per_scan = 181 -- ticks between full scans for new entities
-local ticks_per_update = 251 -- ticks between tracker checks
-local min_registrations_per_tick = 12 -- minumum number of tracker registrations per tick
-local checks_per_update = 4 -- checks before a tracker's tint and mask are updated
+local ticks_per_scan = settings.global["tomwub-ticks-per-scan"] -- ticks between full scans for new entities
+local ticks_per_update = settings.global["tomwub-ticks-per-update"] -- ticks between tracker checks
+local min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"] -- minumum number of tracker registrations per tick
+local checks_per_update = settings.global["tomwub-checks-per-update"] -- checks before a tracker's tint and mask are updated
+
+script.on_event(defines.events.on_runtime_mod_setting_changed, function()
+  ticks_per_scan = settings.global["tomwub-ticks-per-scan"]
+  ticks_per_update = settings.global["tomwub-ticks-per-update"]
+  min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"]
+  checks_per_update = settings.global["tomwub-checks-per-update"]
+end)
 
 local function get_tint(entity)
   return entity.type == "entity-ghost" and prototypes.utility_constants.ghost_shaderless_tint.ghost_tint or
@@ -558,13 +565,13 @@ end)
 script.on_event(defines.events.on_tick, function (event)
   -- register trackers
   for player_index in pairs(game.connected_players) do
-    if (event.tick + player_index) % ticks_per_scan == 0 then
+    if (event.tick + player_index) % ticks_per_scan.value == 0 then
       scan_for_entities(player_index)
     end
   end
   -- validate and register cached scan data
-  local registrations = math.ceil(storage.scan_count / (event.tick + ticks_per_scan / 2) % ticks_per_scan)
-  registrations = registrations > min_registrations_per_tick and registrations or min_registrations_per_tick
+  local registrations = math.ceil(storage.scan_count / (event.tick + ticks_per_scan.value / 2) % ticks_per_scan.value)
+  registrations = registrations > min_registrations_per_tick.value and registrations or min_registrations_per_tick.value
   for _ = 1, registrations do
     local i, tuple = next(storage.scanned_entities)
     if not tuple then break end
@@ -578,21 +585,21 @@ script.on_event(defines.events.on_tick, function (event)
     storage.scan_count = storage.scan_count - 1
   end
   -- update the size of each batch at the start of the loop so everything updates at the same rate
-  if event.tick % ticks_per_update == 0 then
-    storage.batch_size = math.ceil(storage.tracker_count / ticks_per_update)
+  if event.tick % ticks_per_update.value == 0 then
+    storage.batch_size = math.ceil(storage.tracker_count / ticks_per_update.value)
     storage.last_index = nil
   end
   -- update trackers
   local old_trackers = {}
-  local limit = (storage.last_index or event.tick % ticks_per_update == 0) and storage.batch_size or 0
+  local limit = (storage.last_index or event.tick % ticks_per_update.value == 0) and storage.batch_size or 0
   local i = 1
   while i <= limit do
     local index, tracker = next(storage.trackers, storage.last_index)
-    if tracker and (not tracker.entity.valid or (event.tick - tracker.last_tick) > 2 * ticks_per_scan) then
+    if tracker and (not tracker.entity.valid or (event.tick - tracker.last_tick) > 2 * ticks_per_scan.value) then
       old_trackers[#old_trackers+1] = index
       if i == limit then i = limit - 1 end -- make sure we don't end on something thats going to be invalidated
     elseif tracker and next(tracker.players) then
-      tracker.updates = (tracker.updates + 1) % checks_per_update
+      tracker.updates = (tracker.updates + 1) % checks_per_update.value
       update_render(tracker, tracker.updates == 0)
     end
     storage.last_index = index
