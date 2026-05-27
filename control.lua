@@ -457,7 +457,7 @@ local function on_built(event)
     end
   end
 
-  if not player_index or not storage.tomwub[player_index] then return end
+  if not player_index or not storage.tomwub[player_index] or event.name == defines.events.script_raised_built then return end
   local player = game.get_player(player_index)
 
   -- if player just placed last item, then signal to script to update hand again
@@ -466,7 +466,7 @@ local function on_built(event)
 
     -- set ghost cursor
     player.cursor_ghost = {
-      name = entity.name,
+      name = storage.tomwub[player.index].item,
       quality = entity.quality
     }
   end

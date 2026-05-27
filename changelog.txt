@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.7
+Date: 2026-05-26
+  Changes:
+    - Updated on_built refill script
+  Bugfixes:
+    - Fixed a crash when mining a nonstandard entity while holding a single underground pipe. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/56
+---------------------------------------------------------------------------------------------------
 Version: 1.1.6
 Date: 2026-05-23
   Changes:
