@@ -5,12 +5,13 @@ local migration_mode = settings.global["tomwub-migration-mode"].value
 ---@type {[string]: {direction: defines.direction, distance: uint, associated_pipe: data.PipeName}}
 local underground_definitions = assert(prototypes.mod_data["the-one-mod-with-underground-bits"].data.underground_definitions)
 
-if migration_mode == "off" then
-  game.print("[font=default-bold]WARNING:[/font] Actual Underground Pipes has not applied migrations! If this is not intentional, change the migration setting and reload the save to apply migrations. This cannot be done later!")
-  return
-end
+game.print("[font=default-bold]WARNING:[/font] Actual Underground Pipes migration mode is set to " .. migration_mode .. ". If this is not intentional, change the migration setting and reload the save to apply migrations. [font=default-bold]THIS CANNOT BE DONE LATER![/font]")
+game.print({"string-mod-setting-description.tomwub-migration-mode-" .. migration_mode})
+
+if migration_mode == "off" then return end
 
 if script.active_mods["parallel-piping"] then error("\n\n[font=default-bold]WARNING[/font]: Actual Underground Pipes cannot be added to a save at the same time as Parallel Piping! Please disable Parallel Piping, migrate the save, then install Parallel Piping.\n\n") end
+
 
 local pins = {}
 local solved = {}
