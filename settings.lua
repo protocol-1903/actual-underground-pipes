@@ -50,5 +50,16 @@ data:extend{
     setting_type = "runtime-global",
     default_value = 4,
     minimum_value = 1
+  },
+  {
+    type = "string-setting",
+    name = "tomwub-migration-mode",
+    setting_type = "runtime-global",
+    allowed_values = {
+      "off",
+      "safe",
+      "unsafe"
+    },
+    default_value = "safe"
   }
 }

@@ -597,13 +597,13 @@ script.on_event(defines.events.on_tick, function (event)
     local index, tracker = next(storage.trackers, storage.last_index)
     if tracker and (not tracker.entity.valid or (event.tick - tracker.last_tick) > 2 * ticks_per_scan.value) then
       old_trackers[#old_trackers+1] = index
-      if i == limit then i = limit - 1 end -- make sure we don't end on something thats going to be invalidated
     elseif tracker and next(tracker.players) then
       tracker.updates = (tracker.updates + 1) % checks_per_update.value
       update_render(tracker, tracker.updates == 0)
+      i = i + 1
     end
     storage.last_index = index
-    i = i + 1
+    if not index then break end
   end
   -- remove old trackers
   for _, index in pairs(old_trackers) do

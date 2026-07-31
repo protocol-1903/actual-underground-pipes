@@ -96,6 +96,7 @@ function handle(event)
     join_ducts(event)
   end
 end
+local event_filter = {{filter = "type", type = "pipe"}, {filter = "type", type = "storage-tank"}, {filter = "ghost_type", type = "pipe"}, {filter = "ghost_type", type = "storage-tank"}}
 script.on_event(defines.events.on_built_entity, handle, event_filter)
 script.on_event(defines.events.on_robot_built_entity, handle, event_filter)
 script.on_event(defines.events.script_raised_built, handle, event_filter)

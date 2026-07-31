@@ -1,6 +1,7 @@
 _G.tomwub = tomwub or {}
 tomwub.downshift = 10
 
+---@param spritesheet data.Sprite
 tomwub.reformat = function(spritesheet)
   for s, sprite in pairs(spritesheet or {}) do
     if type(sprite) == "table" then
@@ -32,6 +33,8 @@ tomwub.reformat = function(spritesheet)
   end
 end
 
+---@param underground boolean
+---@return data.Sprite4Way
 tomwub.ptg_visualization = function(underground)
   return {
     north = {
@@ -126,13 +129,14 @@ tomwub.dirmap = {
   "west"
 }
 
-local recycling = mods["quality"] and require("__quality__.prototypes.recycling") or nil
+local recycling = mods.recycling and require("__recycling__.prototypes.recycling") or nil
 
-tomwub.adjust_recipes = function(u)
-  log("adjusting recipes for: " .. u)
+---@param id string
+tomwub.adjust_recipes = function(id)
+  log("adjusting recipes for: " .. id)
   for _, recipe in pairs{
-    u,
-    "casting-" .. u
+    id,
+    "casting-" .. id
   } do
     -- if recipe exists
     if data.raw.recipe[recipe] then
@@ -145,17 +149,33 @@ tomwub.adjust_recipes = function(u)
   end
 
   -- if recycling recipe exists
-  if data.raw.recipe[u .. "-recycling"] and recycling then
-    recycling.generate_recycling_recipe(data.raw.recipe[u])
+  if data.raw.recipe[id .. "-recycling"] and recycling then
+    recycling.generate_recycling_recipe(data.raw.recipe[id])
   end
 end
 
+data:extend{{
+  type = "mod-data",
+  name = "the-one-mod-with-underground-bits",
+  data = {underground_definitions = {}}
+}}
+
+local underground_definitions = data.raw["mod-data"]["the-one-mod-with-underground-bits"].data.underground_definitions
+
+---@param prototype data.PipeToGroundPrototype
+---@param pipe data.PipeName
 tomwub.adjust_ptg = function(prototype, pipe)
   log("adjusting pipe to ground: " .. prototype.name)
   prototype.solved_by_tomwub = true
+  ---@type data.CollisionMaskConnector, data.CollisionLayerID, string
   local underground_collision_mask, layer, connection_category
   for _, pipe_connection in pairs(prototype.fluid_box.pipe_connections) do
     if pipe_connection.connection_type == "underground" then
+      underground_definitions[prototype.name] = {
+        direction = pipe_connection.direction,
+        distance = pipe_connection.max_underground_distance,
+        associated_pipe = "tomwub-" .. pipe
+      }
       -- make the underground a fake underground
       pipe_connection.connection_type = "normal"
       pipe_connection.max_underground_distance = nil
@@ -197,6 +217,10 @@ end
 tomwub.default_layer = settings.startup["npt-tomwub-weaving"].value and "tomwub-pipe-underground" or "tomwub-underground"
 tomwub.default_category = not mods["no-pipe-touching"] and "tomwub-underground" or "tomwub-pipe-underground"
 
+---@param pipe data.PipePrototype
+---@param mask data.CollisionMaskConnector
+---@param layer data.CollisionLayerID
+---@param category string
 tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   log("making underground variant of: " .. pipe.name)
   -- create new item, entity, and collision layer
@@ -212,7 +236,7 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.localised_name = {"entity-name.tomwub-underground", pipe.localised_name or {"entity-name." .. pipe.name}}
   u_pipe.collision_mask = mask or { layers = {} }
   u_pipe.flags = {"not-upgradable", "player-creation", "placeable-neutral", "not-flammable"}
-  u_pipe.placeable_by = {{item = "tomwub-" .. pipe.name, count = 1}, {item = pipe.name, count = 1}}
+  u_pipe.placeable_by = {{item = pipe.name, count = 1}, {item = "tomwub-" .. pipe.name, count = 1}}
   u_pipe.resistances = underground_total_resistances
   u_pipe.hide_resistances = true
   u_pipe.horizontal_window_bounding_box = {{0,0},{0,0}}
@@ -260,6 +284,10 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.pictures.low_temperature_flow = nil
   u_pipe.pictures.middle_temperature_flow = nil
   u_pipe.pictures.high_temperature_flow = nil
+
+  -- remove unused circuit connector
+  u_pipe.circuit_connector = nil
+  u_pipe.circuit_wire_max_distance = nil
 
   u_pipe.radius_visualisation_specification = {
     sprite = {
