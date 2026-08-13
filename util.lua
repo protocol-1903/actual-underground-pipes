@@ -233,7 +233,8 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
 
   local u_pipe = table.deepcopy(pipe)
   u_pipe.name = "tomwub-" .. pipe.name
-  u_pipe.localised_name = {"entity-name.tomwub-underground", pipe.localised_name or {"entity-name." .. pipe.name}}
+  u_pipe.localised_name = {"?", {"entity-name.tomwub-" .. pipe.name}, {"entity-name.tomwub-underground", pipe.localised_name or {"entity-name." .. pipe.name}}}
+  u_pipe.localised_description = pipe.localised_description or {"entity-description." .. pipe.name}
   u_pipe.collision_mask = mask or { layers = {} }
   u_pipe.flags = {"not-upgradable", "player-creation", "placeable-neutral", "not-flammable"}
   u_pipe.placeable_by = {{item = pipe.name, count = 1}, {item = "tomwub-" .. pipe.name, count = 1}}
