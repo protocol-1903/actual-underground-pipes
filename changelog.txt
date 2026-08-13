@@ -7,6 +7,7 @@ Date: ????
     - Updated Russian locale thanks to @Osmo
   Bugfixes:
     - Fixed that underground pipes did not copy the descriptions of their aboveground counterparts
+    - Fixed that underground pipes were visible in factoriopedia. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/68
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
 Date: 2026-07-31

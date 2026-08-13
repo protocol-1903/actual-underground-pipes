@@ -246,6 +246,8 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   u_pipe.is_military_target = false
   u_pipe.fast_replaceable_group = settings.startup["npt-tomwub-weaving"].value and u_pipe.name or "tomwub-pipe"
   u_pipe.next_upgrade = nil
+  u_pipe.hidden_in_factoriopedia = true
+  u_pipe.factoriopedia_alternative = pipe.name
 
   data:extend{u_pipe, item}
 
