@@ -2,6 +2,25 @@ require "__perel__.util.scripts.fluids"
 require "__core__.lualib.util"
 local event_filter = {{filter = "type", type = "pipe"}, {filter = "type", type = "storage-tank"}, {filter = "ghost_type", type = "pipe"}, {filter = "ghost_type", type = "storage-tank"}}
 
+---@class (exact) TheOneModWithUndergroundBitsStorage
+---@field tomwub {[int]: {item: string?, quality: string?, count: int?}}
+---@field weaving boolean
+---@field trackers {[int]: PipeTracker}
+---@field tracker_count int
+---@field last_index int?
+---@field scanned_entities LuaEntity[]
+---@field scan_count int
+---@field batch_size int?
+storage = {}
+
+---@class PipeTracker
+---@field entity LuaEntity
+---@field last_tick int
+---@field updates int
+---@field players {[int]: true?}
+---@field mask int
+---@field render LuaRenderObject
+
 script.on_init(function ()
   storage.tomwub = {}
   storage.weaving = settings.startup["npt-tomwub-weaving"].value
@@ -10,6 +29,7 @@ script.on_init(function ()
   storage.last_index = nil
   storage.scanned_entities = {}
   storage.scan_count = 0
+  storage.batch_size = nil
 end)
 
 script.on_configuration_changed(function (event)
@@ -19,6 +39,7 @@ script.on_configuration_changed(function (event)
   storage.last_index = storage.last_index or nil
   storage.scanned_entities = storage.scanned_entities or {}
   storage.scan_count = storage.scan_count or 0
+  storage.batch_size = storage.batch_size or nil
   if script.active_mods["no-pipe-touching"] and (not (event.mod_changes["no-pipe-touching"] or {}).old_version and storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value or
     storage.weaving ~= settings.startup["npt-tomwub-weaving"].value and not settings.startup["npt-tomwub-weaving"].value and event.mod_startup_settings_changed) then
     game.print("Underground pipe layers can no longer be stacked by default. If you wish to enable this feature, please enable the mod setting: Enable underground pipe weaving")
@@ -31,16 +52,13 @@ local ticks_per_update = settings.global["tomwub-ticks-per-update"] -- ticks bet
 local min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"] -- minumum number of tracker registrations per tick
 local checks_per_update = settings.global["tomwub-checks-per-update"] -- checks before a tracker's tint and mask are updated
 
-script.on_event(defines.events.on_runtime_mod_setting_changed, function()
-  ticks_per_scan = settings.global["tomwub-ticks-per-scan"]
-  ticks_per_update = settings.global["tomwub-ticks-per-update"]
-  min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"]
-  checks_per_update = settings.global["tomwub-checks-per-update"]
-end)
-
 local function get_tint(entity)
-  return entity.type == "entity-ghost" and prototypes.utility_constants.ghost_shaderless_tint.ghost_tint or
-    util.multiply_color(entity.get_fluid(1) and prototypes.fluid[entity.get_fluid(1).name].base_color or {1, 1, 1, 1}, settings.global["pipe-opacity"].value)
+  return util.multiply_color(
+    entity.type == "entity-ghost" and prototypes.utility_constants.ghost_shaderless_tint.ghost_tint or
+    entity.get_fluid(1) and prototypes.fluid[entity.get_fluid(1).name].base_color or
+    {1, 1, 1, 1},
+    settings.global["tomwub-pipe-opacity"].value
+  )
 end
 
 local indicator_alts = {}
@@ -97,6 +115,8 @@ local function insert_if_safe(inventory, item, quality, count)
   }
 end
 
+---@param tracker PipeTracker
+---@param update boolean?
 local function update_render(tracker, update)
   if not tracker then return end
   local entity = tracker.entity
@@ -106,19 +126,18 @@ local function update_render(tracker, update)
     players[#players+1] = index
   end
   tracker.render.players = players
-  if update or not tracker.render or not tracker.render.valid then
+  if update then
     local mask = perel.get_pipe_connection_bitmask(entity)
     if mask ~= tracker.mask then
       tracker.mask = mask -- update connection mask of tracker
       tracker.render.sprite = get_indicator(entity):format(mask)
     end
     -- update tint
-    if tracker.entity.type ~= "entity-ghost" then
-      tracker.tint = get_tint(entity) -- update tint of tracker
-    end
+    tracker.render.color = get_tint(entity) -- update tint of tracker
   end
 end
 
+---@param entity LuaEntity
 local function update_tracker(entity)
   if not entity.valid then return end
   if storage.trackers[entity.unit_number] then
@@ -145,6 +164,8 @@ local function update_tracker(entity)
   storage.trackers[entity.unit_number] = tracker
 end
 
+---@param tracker PipeTracker
+---@param player_index uint
 local function register_for_tracker(tracker, player_index)
   if player_index and not tracker.players[player_index] then
     if tracker.entity.type == "entity-ghost" then
@@ -162,6 +183,7 @@ local function register_for_tracker(tracker, player_index)
   end
 end
 
+---@param player_index uint
 local function deregister_trackers(player_index)
   for _, tracker in pairs(storage.trackers) do
     if tracker.render.valid and tracker.players[player_index] then
@@ -192,6 +214,7 @@ end
 
 local underground_pipes_by_mask = {}
 
+---@param player_index uint
 local function scan_for_entities(player_index)
   local player = game.get_player(player_index)
 
@@ -237,6 +260,18 @@ local function scan_for_entities(player_index)
     end
   end
 end
+
+script.on_event(defines.events.on_runtime_mod_setting_changed, function (event)
+  ticks_per_scan = settings.global["tomwub-ticks-per-scan"]
+  ticks_per_update = settings.global["tomwub-ticks-per-update"]
+  min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"]
+  checks_per_update = settings.global["tomwub-checks-per-update"]
+  if event.setting == "tomwub-pipe-opacity" then
+    for _, tracker in pairs(storage.trackers) do
+      update_render(tracker, true)
+    end
+  end
+end)
 
 script.on_event(defines.events.on_player_controller_changed, function (event)
   local player = game.get_player(event.player_index)

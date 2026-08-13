@@ -2,7 +2,7 @@ data:extend{
   {
     type = "double-setting",
     setting_type = "runtime-global",
-    name = "pipe-opacity",
+    name = "tomwub-pipe-opacity",
     minimum_value = 0,
     maximum_value = 1,
     default_value = 0.7
