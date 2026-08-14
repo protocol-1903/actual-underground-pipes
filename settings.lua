@@ -11,9 +11,7 @@ data:extend{
     type = "bool-setting",
     name = "npt-tomwub-weaving",
     setting_type = "startup",
-    default_value = false,
-    forced_value = false,
-    hidden = not mods["no-pipe-touching"] or not not mods["color-coded-pipes"]
+    default_value = false
   },
   {
     type = "int-setting",

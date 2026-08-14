@@ -252,12 +252,13 @@ tomwub.make_tomwub_variant = function(pipe, mask, layer, category)
   data:extend{u_pipe, item}
 
   -- since we can only check while in the loop
-  if settings.startup["npt-tomwub-weaving"].value and table_size(data.raw["collision-layer"]) == 55 then
+  if settings.startup["npt-tomwub-weaving"].value and table_size(data.raw["collision-layer"]) == 256 then
     local ptg_list = ""
     for prototype in pairs(data.raw["pipe-to-ground"]) do
       ptg_list = ptg_list .. "- " .. prototype .. "\n"
     end
     error("There are too many pipes. Please remove one of the following mods:\n" .. (
+      (mods["color-coded-pipes"] and "- Color Coded Pipes\n" or "") ..
       (mods["RGBPipes"] and "- RGB Pipes\n" or "") ..
       (mods["pipe-tiers"] and "- Pipe Tiers\n" or "")
     ) .. "\nOr disable the mod setting: Enable underground pipe weaving.\n\nOr remove a mod that adds some of the following:\n" .. ptg_list)
