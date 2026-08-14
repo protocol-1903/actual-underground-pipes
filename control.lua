@@ -55,7 +55,7 @@ local checks_per_update = settings.global["tomwub-checks-per-update"] -- checks 
 local function get_tint(entity)
   return util.multiply_color(
     entity.type == "entity-ghost" and prototypes.utility_constants.ghost_shaderless_tint.ghost_tint or
-    entity.get_fluid(1) and prototypes.fluid[entity.get_fluid(1).name].base_color or
+    settings.global["tomwub-tint-pipes-by-fluid"].value and entity.get_fluid(1) and prototypes.fluid[entity.get_fluid(1).name].base_color or
     {1, 1, 1, 1},
     settings.global["tomwub-pipe-opacity"].value
   )
@@ -213,27 +213,44 @@ local function deregister_trackers(player_index)
 end
 
 local underground_pipes_by_mask = {}
+local all_underground_pipes = {}
+
+for _, pipe in pairs(prototypes.entity) do
+  if pipe.name:sub(1, 7) == "tomwub-" then
+    all_underground_pipes[#all_underground_pipes + 1] = pipe.name
+  end
+end
 
 ---@param player_index uint
 local function scan_for_entities(player_index)
   local player = game.get_player(player_index)
 
-  deregister_trackers(player_index)
+  if not settings.global["tomwub-always-show-undergrounds"].value then
+    deregister_trackers(player.index)
+  end
 
-  local item = player.cursor_ghost and player.cursor_ghost.name or
-  player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.prototype or nil
-  if not item then return end
+  local scan_targets
 
-  local place_result = item.place_result
-  if not place_result or place_result.name:sub(1, 7) ~= "tomwub-" then return end
+  if settings.global["tomwub-always-show-undergrounds"].value then
+    scan_targets = all_underground_pipes
+  else
+    local item = player.cursor_ghost and player.cursor_ghost.name or
+    player.cursor_stack and player.cursor_stack.valid_for_read and player.cursor_stack.prototype or nil
+    if not item then return end
+  
+    local place_result = item.place_result
+    if not place_result or place_result.name:sub(1, 7) ~= "tomwub-" then return end
 
-  for layer in pairs(place_result.collision_mask.layers) do
-    if not underground_pipes_by_mask[layer] then
-      underground_pipes_by_mask[layer] = {}
-      for target in pairs(prototypes.get_entity_filtered{{filter = "collision-mask", mask = layer, mask_mode = "collides"}}) do
-        underground_pipes_by_mask[layer][#underground_pipes_by_mask[layer]+1] = target
+    for layer in pairs(place_result.collision_mask.layers) do
+      if not underground_pipes_by_mask[place_result.name] then
+        underground_pipes_by_mask[place_result.name] = {}
+        for target in pairs(prototypes.get_entity_filtered{{filter = "collision-mask", mask = layer, mask_mode = "collides"}}) do
+          underground_pipes_by_mask[place_result.name][#underground_pipes_by_mask[place_result.name]+1] = target
+        end
       end
     end
+
+    scan_targets = underground_pipes_by_mask[place_result.name]
   end
 
   for _, type in pairs{
@@ -243,7 +260,7 @@ local function scan_for_entities(player_index)
     for _, entity in pairs(player.surface.find_entities_filtered{
       position = player.position,
       radius = player.mod_settings["tomwub-underground-indicators-range"].value,
-      [type] = underground_pipes_by_mask[place_result.name]
+      [type] = scan_targets
     }) do
       if (entity.name == "entity-ghost" and entity.ghost_name or entity.name):sub(1, 7) == "tomwub-" then
         if storage.trackers[entity.unit_number] then
@@ -266,9 +283,19 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function (event)
   ticks_per_update = settings.global["tomwub-ticks-per-update"]
   min_registrations_per_tick = settings.global["tomwub-min-registrations-per-tick"]
   checks_per_update = settings.global["tomwub-checks-per-update"]
-  if event.setting == "tomwub-pipe-opacity" then
+  if event.setting == "tomwub-pipe-opacity" or event.setting == "tomwub-tint-pipes-by-fluid" then
     for _, tracker in pairs(storage.trackers) do
       update_render(tracker, true)
+    end
+  end
+  if event.setting == "tomwub-always-show-undergrounds" and settings.global["tomwub-always-show-undergrounds"].value then
+    for _, player in pairs(game.players) do
+      deregister_trackers(player.index)
+      scan_for_entities(player.index)
+    end
+  elseif event.setting == "tomwub-always-show-undergrounds" and not settings.global["tomwub-always-show-undergrounds"].value then
+    for _, player in pairs(game.players) do
+      scan_for_entities(player.index)
     end
   end
 end)
@@ -376,7 +403,9 @@ script.on_event(defines.events.on_player_cursor_stack_changed, function (event)
     end
   elseif old_count > 0 and item ~= old_item and old_item:sub(1,7) == "tomwub-" then
     -- was previously holding item, just put it away so put pipes back into inventory
-    deregister_trackers(player.index)
+    if not settings.global["tomwub-always-show-undergrounds"].value then
+      deregister_trackers(player.index)
+    end
 
     -- get amount added to inventory
     local inserted = insert_if_safe(player.get_main_inventory(), old_item:sub(8, -1), old_quality, old_count)
@@ -555,7 +584,9 @@ script.on_event("tomwub-swap-layer", function(event)
         }
       end
     end
-    deregister_trackers(player.index)
+    if not settings.global["tomwub-always-show-undergrounds"].value then
+      deregister_trackers(player.index)
+    end
   elseif prototypes.item["tomwub-" .. item] then -- verify tomwub variant exists
     -- currently ghost entity, swap with ghost
     if count == 0 then
@@ -630,7 +661,7 @@ script.on_event(defines.events.on_tick, function (event)
   local i = 1
   while i <= limit do
     local index, tracker = next(storage.trackers, storage.last_index)
-    if tracker and (not tracker.entity.valid or (event.tick - tracker.last_tick) > 2 * ticks_per_scan.value) then
+    if tracker and (not tracker.entity.valid or not settings.global["tomwub-always-show-undergrounds"].value and (event.tick - tracker.last_tick) > 2 * ticks_per_scan.value) then
       old_trackers[#old_trackers+1] = index
     elseif tracker and next(tracker.players) then
       tracker.updates = (tracker.updates + 1) % checks_per_update.value

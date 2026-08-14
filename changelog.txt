@@ -1,11 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: ????
+  Features:
+    - Added a global setting to tint based on fluid contents. Default on. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/66
+    - Added a global setting to always show underground pipes. Default off
   Changes:
     - Now uses proper underground pipe localization when possible, then falls back on concatenation when no locale is found. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/67
   Locale:
     - Updated Russian locale thanks to @Osmo
   Bugfixes:
+    - Fixed that pipe search would not be properly filtered and use the fallback method instead
     - Fixed that pipe opacity was not updated when the mod setting was changed. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/65
     - Fixed that ghost pipes did not respect the opacity setting
     - Fixed that underground pipes did not copy the descriptions of their aboveground counterparts

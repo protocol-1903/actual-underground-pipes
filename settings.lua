@@ -1,16 +1,16 @@
 data:extend{
   {
     type = "double-setting",
-    setting_type = "runtime-global",
     name = "tomwub-pipe-opacity",
+    setting_type = "runtime-global",
     minimum_value = 0,
     maximum_value = 1,
     default_value = 0.7
   },
   {
     type = "bool-setting",
-    setting_type = "startup",
     name = "npt-tomwub-weaving",
+    setting_type = "startup",
     default_value = false,
     forced_value = false,
     hidden = not mods["no-pipe-touching"] or not not mods["color-coded-pipes"]
@@ -61,5 +61,17 @@ data:extend{
       "unsafe"
     },
     default_value = "safe"
+  },
+  {
+    type = "bool-setting",
+    name = "tomwub-tint-pipes-by-fluid",
+    setting_type = "runtime-global",
+    default_value = true
+  },
+  {
+    type = "bool-setting",
+    name = "tomwub-always-show-undergrounds",
+    setting_type = "runtime-global",
+    default_value = false
   }
 }
