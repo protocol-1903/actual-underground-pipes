@@ -23,7 +23,7 @@ local function join_ducts(e)
     return
   end
 
-  for _, connection in pairs(entity.fluidbox.get_pipe_connections(1)) do
+  for _, connection in pairs(entity.get_fluid_box_pipe_connections(1)) do
     local neighbour = entity.surface.find_entity(entity.name, connection.target_position)
     if neighbour then
       local direction = entity.direction

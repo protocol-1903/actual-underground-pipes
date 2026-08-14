@@ -11,6 +11,7 @@ Date: ????
   Locale:
     - Updated Russian locale thanks to @Osmo
   Bugfixes:
+    - Fixed a crash when building underground fluid must flow ducts. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/70
     - Fixed that pipe search would not be properly filtered and use the fallback method instead
     - Fixed that pipe opacity was not updated when the mod setting was changed. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/65
     - Fixed that ghost pipes did not respect the opacity setting
