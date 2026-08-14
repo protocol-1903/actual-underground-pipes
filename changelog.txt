@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
-Date: ????
+Date: 2026-08-14
   Features:
     - Added a global setting to tint based on fluid contents. Default on. Resolves https://github.com/protocol-1903/the-one-mod-with-underground-bits/issues/66
     - Added a global setting to always show underground pipes. Default off
